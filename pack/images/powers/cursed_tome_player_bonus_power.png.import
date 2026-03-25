@@ -1,0 +1,34 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://d7qvnt5r2mz8p"
+path.s3tc="res://.godot/imported/cursed_tome_player_bonus_power.png-3f7b2a91ce804d5087f6e3c1a9724b8e.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+
+[deps]
+
+source_file="res://images/powers/cursed_tome_player_bonus_power.png"
+dest_files=["res://.godot/imported/cursed_tome_player_bonus_power.png-3f7b2a91ce804d5087f6e3c1a9724b8e.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=1.0
+compress/uastc_level=2
+compress/rdo_quality_loss=0
+compress/hdr_compression=0
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=false
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

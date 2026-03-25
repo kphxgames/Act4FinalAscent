@@ -1,0 +1,16 @@
+[remap]
+
+importer="spine.atlas"
+type="SpineAtlasResource"
+uid="uid://act4architectphase2atlas"
+path="res://.godot/imported/architect_phase2_architect.atlas.spatlas"
+
+[deps]
+
+source_file="res://animations/monsters/architect_phase2/architect.atlas"
+dest_files=["res://.godot/imported/architect_phase2_architect.atlas.spatlas"]
+
+[params]
+
+normal_map_prefix="n"
+specular_map_prefix="s"

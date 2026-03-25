@@ -1,0 +1,56 @@
+; EN: Oblivion power-up aura for Act4Placeholder mod
+; ZH: 湮灭能量聚集光环——适配第四幕Mod
+; Based on relic_rare_glow_vfx.tscn with red color, absorbing shrink curve, and higher density.
+; Node2D.Scale is controlled per-turn from C# (starts 0.5x, grows to 2.0x).
+[gd_scene load_steps=8 format=3 uid="uid://b4act4obl1vfx"]
+
+[ext_resource type="Texture2D" uid="uid://bwpxaleox0q83" path="res://images/packed/vfx/generic/glow_card_rare.png" id="1_tex"]
+[ext_resource type="CanvasItemMaterial" uid="uid://c4ycqv0gdxvmr" path="res://themes/canvas_item_material_additive_shared.tres" id="2_mat"]
+
+; Alpha fade curve — same bell shape as the original glow, so particles fade in/out naturally.
+[sub_resource type="Curve" id="Curve_alpha"]
+_data = [Vector2(0, 0), 0.0, 0.220401, 0, 0, Vector2(0.205212, 0.557265), 3.28838, 3.28838, 0, 0, Vector2(0.498567, 1), 0.0, 0.0, 0, 0, Vector2(0.806189, 0.526916), -3.33054, -3.33054, 0, 0, Vector2(1, 0), -0.0327443, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_alpha"]
+width = 64
+curve = SubResource("Curve_alpha")
+
+; Scale SHRINK curve — particles spawn large (2.5x) and shrink to 0 over their lifetime.
+; This gives an "absorbing inward" feel instead of the original "expelling outward" grow.
+[sub_resource type="Curve" id="Curve_scale_shrink"]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 2.5), 0.0, -3.0, 0, 0, Vector2(1, 0), -3.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_scale"]
+width = 64
+curve = SubResource("Curve_scale_shrink")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_aura"]
+lifetime_randomness = 0.1
+particle_flag_disable_z = true
+angle_min = -180.0
+angle_max = 180.0
+angular_velocity_min = -3.00002
+angular_velocity_max = 2.99998
+gravity = Vector3(0, 0, 0)
+scale_min = 0.5
+scale_curve = SubResource("CurveTexture_scale")
+color = Color(1, 0.06, 0.04, 0.75)
+alpha_curve = SubResource("CurveTexture_alpha")
+hue_variation_min = -0.05
+hue_variation_max = 0.05
+
+; Root GPUParticles2D node.
+; amount=12 for a denser aura (original=3); explosiveness=0.5 for moderate burst emission.
+; scale is intentionally left at default (1,1) — C# sets it to 0.5 on spawn and grows it per turn.
+[node name="OblivionAura" type="GPUParticles2D"]
+material = ExtResource("2_mat")
+amount = 12
+texture = ExtResource("1_tex")
+lifetime = 1.8
+preprocess = 1.0
+explosiveness = 0.5
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_aura")

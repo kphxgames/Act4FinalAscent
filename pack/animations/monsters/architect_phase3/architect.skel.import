@@ -1,0 +1,13 @@
+[remap]
+
+importer="spine.skel"
+type="SpineSkeletonFileResource"
+uid="uid://act4architectphase3skel"
+path="res://.godot/imported/architect_phase3_architect.skel.spskel"
+
+[deps]
+
+source_file="res://animations/monsters/architect_phase3/architect.skel"
+dest_files=["res://.godot/imported/architect_phase3_architect.skel.spskel"]
+
+[params]

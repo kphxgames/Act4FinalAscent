@@ -1,0 +1,13 @@
+; Engine configuration file.
+; Minimal project file used to import custom resources before packing the mod.
+
+config_version=5
+
+[application]
+
+config/name="Act4PlaceholderPack"
+run/main_scene=""
+
+[rendering]
+
+renderer/rendering_method="forward_plus"

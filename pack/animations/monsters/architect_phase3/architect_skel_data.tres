@@ -1,0 +1,20 @@
+[gd_resource type="SpineSkeletonDataResource" load_steps=5 format=3]
+
+[ext_resource type="SpineAtlasResource" path="res://animations/monsters/architect_phase3/architect.atlas" id="1_atlas"]
+[ext_resource type="SpineSkeletonFileResource" path="res://animations/monsters/architect_phase3/architect.skel" id="2_skel"]
+
+[sub_resource type="SpineAnimationMix" id="SpineAnimationMix_head_stop"]
+from = "_tracks/head_reading"
+to = "_tracks/head_stop_reading"
+mix = 0.02
+
+[sub_resource type="SpineAnimationMix" id="SpineAnimationMix_head_normal"]
+from = "_tracks/head_stop_reading"
+to = "_tracks/head_normal"
+mix = 0.1
+
+[resource]
+atlas_res = ExtResource("1_atlas")
+skeleton_file_res = ExtResource("2_skel")
+default_mix = 0.05
+animation_mixes = [SubResource("SpineAnimationMix_head_stop"), SubResource("SpineAnimationMix_head_normal")]

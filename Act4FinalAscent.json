@@ -1,0 +1,10 @@
+{
+  "id": "Act4FinalAscent",
+  "name": "Act 4: Final Ascent",
+  "author": "Act 4: Final Ascent Contributors",
+  "description": "Act 4: Final Ascent adds The Architect as a full Act 4 boss encounter.",
+  "version": "0.1.2",
+  "has_dll": true,
+  "has_pck": true,
+  "affects_gameplay": true
+}
