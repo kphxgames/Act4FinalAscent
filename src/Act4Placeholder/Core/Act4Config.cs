@@ -115,13 +115,13 @@ internal static class Act4Config
 	// -- Heavy-attack (single-target) damage bases ----------------------------
 	internal const int ArchitectP1HeavyDamage = 9;
 	internal const int ArchitectP2HeavyDamage = 15;
-	internal const int ArchitectP3HeavyDamage = 16;
+	internal const int ArchitectP3HeavyDamage = 14;
 	internal const int ArchitectP4HeavyDamage = 11;
 
 	// -- Multi-hit attack per-hit damage bases --------------------------------
 	internal const int ArchitectP1MultiDamage = 3;
 	internal const int ArchitectP2MultiDamage = 5;
-	internal const int ArchitectP3MultiDamage = 5;
+	internal const int ArchitectP3MultiDamage = 3;
 	internal const int ArchitectP4MultiDamage = 3;
 
 	// -- Multi-hit attack hit counts ------------------------------------------
@@ -162,7 +162,7 @@ internal static class Act4Config
 	/// EN: Under-cap strength cadence for phases 1–2 (gain every N rounds). | ZH: 一二阶段低于上限时的力量节奏（每N轮获得）。
 	internal const int ArchitectP1P2UnderCapCadence = 3;
 	/// EN: Under-cap strength cadence for phase 3 (every N rounds).         | ZH: 三阶段低于上限时的力量节奏（每N轮获得）。
-	internal const int ArchitectP3UnderCapCadence   = 1;
+	internal const int ArchitectP3UnderCapCadence   = 2;
 	/// EN: Over-cap strength cadence for all phases (every N rounds).        | ZH: 所有阶段超出上限时的力量节奏（每N轮获得）。
 	internal const int ArchitectOverCapCadence       = 3;
 
@@ -211,11 +211,11 @@ internal static class Act4Config
 	/// EN: Shadow Champion target HP (solo).                      | ZH: 单人暗影冠军目标HP。
 	internal const int     ArchitectShadowHp              = 485;
 	/// EN: Phase 4 Linked Shadow HP per character type (solo, 5 summoned simultaneously). | ZH: 四阶段连结之影各角色单人HP（同时5只）。
-	internal const int     LinkedShadowIroncladHp         = 133;
+	internal const int     LinkedShadowIroncladHp         = 153;
 	internal const int     LinkedShadowSilentHp           = 111;
 	internal const int     LinkedShadowDefectHp           = 124;
 	internal const int     LinkedShadowNecrobinderHp      = 120;
-	internal const int     LinkedShadowRegentHp           = 128;
+	internal const int     LinkedShadowRegentHp           = 148;
 	/// EN: Shadow HP multiplier at 2 players (base).              | ZH: 2人联机暗影HP倍率（基础值）。
 	internal const decimal ShadowMp2pBase            = 0.8m;
 	/// EN: Additional shadow HP multiplier per player above 2.    | ZH: 超过2人时每位玩家增加的暗影HP倍率。

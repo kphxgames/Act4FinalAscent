@@ -189,7 +189,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 
 		MoveState phaseFourHeavyState = new MoveState("PHASE_FOUR_HEAVY", (Func<IReadOnlyList<Creature>, Task>)PhaseFourHeavyMove, new AbstractIntent[1] { new SingleAttackIntent((Func<decimal>)(() => (decimal)PhaseFourHeavyDamage)) });
 		MoveState phaseFourMultiState = new MoveState("PHASE_FOUR_MULTI", (Func<IReadOnlyList<Creature>, Task>)PhaseFourMultiMove, new AbstractIntent[1] { new DynamicMultiAttackIntent(() => (decimal)PhaseFourMultiDamage, () => PhaseFourMultiHits) });
-		MoveState phaseFourBlockState = new MoveState("PHASE_FOUR_BLOCK", (Func<IReadOnlyList<Creature>, Task>)PhaseFourBlockMove, new AbstractIntent[1] { new DefendIntent() });
+		MoveState phaseFourBlockState = new MoveState("PHASE_FOUR_BLOCK", (Func<IReadOnlyList<Creature>, Task>)PhaseFourBlockMove, new AbstractIntent[2] { new DefendIntent(), new BuffIntent() });
 		MoveState phaseFourBuffState = new MoveState("PHASE_FOUR_BUFF", (Func<IReadOnlyList<Creature>, Task>)PhaseFourBuffMove, new AbstractIntent[2]
 		{
 			new BuffIntent(),

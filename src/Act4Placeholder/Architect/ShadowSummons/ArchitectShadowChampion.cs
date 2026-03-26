@@ -84,9 +84,9 @@ public abstract class ArchitectShadowChampion : MonsterModel
 			((CanvasItem)canvasGroup).SetSelfModulate(ShadowTint);
 		}
 		creatureNode?.ScaleTo(1f, 0f);
-		if (creatureNode?.Body != null && creatureNode.Body.Scale.X > 0f)
+		Node2D body = creatureNode?.SpineController?.BoundObject as Node2D;
+		if (body != null && body.Scale.X > 0f)
 		{
-			Node2D body = creatureNode.Body;
 			body.Scale *= new Vector2(-1f, 1f);
 		}
 	}

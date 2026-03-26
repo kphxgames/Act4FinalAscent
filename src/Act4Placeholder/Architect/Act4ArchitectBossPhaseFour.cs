@@ -87,8 +87,14 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		{
 			return;
 		}
-		int blockAmount = Math.Max(1, (int)Math.Ceiling((decimal)((MonsterModel)this).Creature.MaxHp * 0.06m));
+		// Block: 3% of max HP (the left side is attacking, so Architect gets a lighter buff block).
+		int blockAmount = Math.Max(1, (int)Math.Ceiling((decimal)((MonsterModel)this).Creature.MaxHp * 0.03m));
 		await CreatureCmd.GainBlock(((MonsterModel)this).Creature, (decimal)blockAmount, ValueProp.Move, null);
+		// +1 Slippery, +1 Artifact while the left-side shadows handle the offense.
+		int curSlippery = ((MonsterModel)this).Creature.GetPower<SlipperyPower>()?.Amount ?? 0;
+		int curArtifact = ((MonsterModel)this).Creature.GetPower<ArtifactPower>()?.Amount ?? 0;
+		await PowerCmd.SetAmount<SlipperyPower>(((MonsterModel)this).Creature, (decimal)(curSlippery + 1), ((MonsterModel)this).Creature, (CardModel)null);
+		await PowerCmd.SetAmount<ArtifactPower>(((MonsterModel)this).Creature, (decimal)(curArtifact + 1), ((MonsterModel)this).Creature, (CardModel)null);
 		NPowerUpVfx.CreateNormal(((MonsterModel)this).Creature);
 	}
 

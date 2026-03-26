@@ -35,6 +35,7 @@ using MegaCrit.Sts2.Core.Nodes;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 using MegaCrit.Sts2.Core.Runs;
@@ -604,7 +605,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 				LogArchitect($"SwapArchitectSkeletonData:load-failed path={skeletonDataPath}");
 				return;
 			}
-			Node2D body = creatureNode.Visuals?.Body;
+			Node2D body = spineController?.BoundObject as Node2D;
 			if (body != null)
 			{
 				body.Visible = true;
@@ -1000,8 +1001,8 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		if (index == 2 || index == 3)
 		{
 			Vector2 offset = (index == 3)
-				? new Vector2(-205f, -200f)   // Regent: 175px further right in Phase 4.
-				: new Vector2(-75f, -80f);    // Defect: 175px further right in Phase 4.
+				? new Vector2(-305f, -200f)   // Regent: compensated for Architect's rightward shift.
+				: new Vector2(-175f, -80f);    // Defect: compensated for Architect's rightward shift.
 			((Control)shadowNode).Position = ((Control)archNode).Position + offset;
 			return;
 		}
@@ -1017,7 +1018,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		// - Necrobinder shifted 15px left.
 		// Ironclad gets ZIndex 1 so he stays visually in front.
 		int leftSlot = (index == 0) ? 0 : (index == 1) ? 1 : 2;
-		float[] xPositions = new float[] { 155f, 445f, 295f }; // Ironclad unchanged, Silent -5, Necrobinder -15
+		float[] xPositions = new float[] { 155f, 445f, 280f }; // Ironclad unchanged, Silent -5, Necrobinder -30
 		float[] yOffsets   = new float[] { -150f, -85f, 10f }; // Silent up 35
 		((Control)shadowNode).GlobalPosition = new Vector2(xPositions[leftSlot], archGlobal.Y + yOffsets[leftSlot]);
 		((CanvasItem)shadowNode).ZIndex = (leftSlot == 0) ? 1 : 0;
@@ -1065,7 +1066,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		if (archNode != null)
 		{
 			Tween archTween = archNode.CreateTween();
-			archTween.TweenProperty(archNode, "position:x", ((Control)archNode).Position.X + 175f, 0.7)
+			archTween.TweenProperty(archNode, "position:x", ((Control)archNode).Position.X + 275f, 0.7)
 				.SetEase(Tween.EaseType.InOut)
 				.SetTrans(Tween.TransitionType.Sine);
 		}
@@ -1337,6 +1338,9 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		ShowArchitectSpeech("Enough.\nYour turn is over.", IsPhaseThree ? VfxColor.Black : (IsPhaseTwo ? VfxColor.Purple : VfxColor.Blue), 3f);
 		NPowerUpVfx.CreateGhostly(((MonsterModel)this).Creature);
 		NPlayerHand.Instance?.CancelAllCardPlay();
+		// Force-close any open card selection overlay (e.g. Prepared's discard picker)
+		// to prevent soft-lock when retaliation ends the turn mid-selection.
+		NOverlayStack.Instance?.Clear();
 		foreach (Player player in ((MonsterModel)this).CombatState.Players)
 		{
 			if (player?.Creature != null && player.Creature.IsAlive && !instance.IsPlayerReadyToEndTurn(player))
@@ -1384,6 +1388,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		CombatManager combatMgr = CombatManager.Instance;
 		if (combatMgr != null && combatMgr.IsPlayPhase && !combatMgr.EndingPlayerTurnPhaseOne && !combatMgr.EndingPlayerTurnPhaseTwo)
 		{
+			NOverlayStack.Instance?.Clear();
 			foreach (Player player in ((MonsterModel)this).CombatState?.Players ?? Enumerable.Empty<Player>())
 			{
 				if (player?.Creature?.IsAlive == true && !combatMgr.IsPlayerReadyToEndTurn(player))
