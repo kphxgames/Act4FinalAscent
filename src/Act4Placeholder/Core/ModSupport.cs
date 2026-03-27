@@ -14,6 +14,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Bindings.MegaSpine;
 using MegaCrit.Sts2.Core.Assets;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -35,6 +36,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.Map;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
@@ -184,6 +186,8 @@ internal static class ModSupport
 	private static readonly FieldInfo? ActModelRoomsField = AccessTools.Field(typeof(ActModel), "_rooms");
 
 	private static readonly FieldInfo? RunManagerStartTimeField = AccessTools.Field(typeof(RunManager), "_startTime");
+
+	private static readonly PropertyInfo? NCreatureVisualsProperty = AccessTools.Property(typeof(NCreature), "Visuals");
 
 	private static readonly HashSet<ulong> AdminPlayers = new HashSet<ulong>();
 
@@ -339,6 +343,34 @@ internal static class ModSupport
 	internal static bool IsAdminEnabled(Player? player)
 	{
 		return player != null && AdminPlayers.Contains(player.NetId);
+	}
+
+	internal static MegaSprite? TryGetCreatureSpineController(NCreature? creatureNode)
+	{
+		if (creatureNode == null)
+		{
+			return null;
+		}
+		try
+		{
+			object? visuals = NCreatureVisualsProperty?.GetValue(creatureNode);
+			if (visuals == null)
+			{
+				return null;
+			}
+			PropertyInfo? spineBodyProperty = visuals.GetType().GetProperty("SpineBody", BindingFlags.Public | BindingFlags.Instance);
+			return spineBodyProperty?.GetValue(visuals) as MegaSprite;
+		}
+		catch (Exception ex)
+		{
+			Logger.Warn($"TryGetCreatureSpineController failed: {ex.Message}", 1);
+			return null;
+		}
+	}
+
+	internal static Node2D? TryGetCreatureBodyNode(NCreature? creatureNode)
+	{
+		return TryGetCreatureSpineController(creatureNode)?.BoundObject as Node2D;
 	}
 
 	internal static void EnsureAdminButton(NMapScreen mapScreen)

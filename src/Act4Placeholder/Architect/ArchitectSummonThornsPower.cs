@@ -38,9 +38,8 @@ internal sealed class ArchitectSummonThornsPower : PowerModel
 	// ZH: 当建筑师受到有效攻击时触发反伤。
 	//     Omnislice保留显式兜底，实战中它不一定总是以标准Move命中进入此钩子。
 	//
-	//     反伤现在可被格挡：
-	//     - 使用 `ValueProp.Move` 作为常规命中
-	//     - 不再附加 `Unpowered`，因此格挡可正常生效。
+	//     使用 ValueProp.Unpowered（与基础ThornsPower保持一致），
+	//     避免反伤被建筑师的力量加成放大。反伤仍可被格挡吸收。
 	//=============================================================================
 	public override async Task BeforeDamageReceived(PlayerChoiceContext choiceContext, Creature target, decimal amount, ValueProp props, Creature? dealer, CardModel? cardSource)
 	{
@@ -48,7 +47,7 @@ internal sealed class ArchitectSummonThornsPower : PowerModel
 		if (target == base.Owner && dealer != null && (isAttack || cardSource is Omnislice))
 		{
 			Flash();
-			await CreatureCmd.Damage(choiceContext, dealer, base.Amount, ValueProp.Move | ValueProp.SkipHurtAnim, base.Owner, null);
+			await CreatureCmd.Damage(choiceContext, dealer, base.Amount, ValueProp.Unpowered | ValueProp.SkipHurtAnim, base.Owner, null);
 		}
 	}
 }

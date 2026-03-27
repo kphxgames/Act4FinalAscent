@@ -24,6 +24,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Encounters;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Settings;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Multiplayer;
@@ -511,9 +513,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		Act4AudioHelper.PlayTmp("plasma_orb_channel.mp3");
 		RestoreArchitectReviveUi();
 		LogArchitect($"EnterPhaseTwo:healed hp={((MonsterModel)this).Creature.CurrentHp}/{((MonsterModel)this).Creature.MaxHp}");
-		await PlayPhaseTransitionBurstAsync(ArchitectPhaseTwoTint, 1.1f, movingRightwards: true);
-		SwapArchitectSkeletonData(ArchitectPhaseTwoSkeletonDataPath);
-		ApplyArchitectVisuals(ArchitectPhaseTwoTint, 1.1f, preservePosition: true);
+		await TryApplyPhaseTransitionVisualsAsync("EnterPhaseTwo", ArchitectPhaseTwoTint, 1.1f, movingRightwards: true, ArchitectPhaseTwoSkeletonDataPath);
 		UpdateTorchGradient(PurpleFireGradient);
 		await SetStrengthAmountAsync(Act4Config.ArchitectP2OpeningStrength);
 		await SyncAdaptiveResistancePowerAsync();
@@ -598,9 +598,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		Act4AudioHelper.PlayModBgm("res://Act4Placeholder/audio/spirit_citadel.ogg", 0.6f);
 		RestoreArchitectReviveUi();
 		LogArchitect($"EnterPhaseThree:healed hp={((MonsterModel)this).Creature.CurrentHp}/{((MonsterModel)this).Creature.MaxHp}");
-		await PlayPhaseTransitionBurstAsync(ArchitectPhaseThreeTint, 1.2f, movingRightwards: false);
-		SwapArchitectSkeletonData(ArchitectPhaseThreeSkeletonDataPath);
-		ApplyArchitectVisuals(ArchitectPhaseThreeTint, 1.2f, preservePosition: true);
+		await TryApplyPhaseTransitionVisualsAsync("EnterPhaseThree", ArchitectPhaseThreeTint, 1.2f, movingRightwards: false, ArchitectPhaseThreeSkeletonDataPath);
 		UpdateTorchGradient(BlackFireGradient);
 		EnsurePhaseThreeAura();
 		LogArchitect("EnterPhaseThree:aura-ready");
@@ -691,9 +689,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		RepositionCreaturesForPhaseFour();
 		await Cmd.Wait(0.35f, false);
 		RestoreArchitectReviveUi();
-		await PlayPhaseTransitionBurstAsync(ArchitectPhaseFourTint, 1.2f, movingRightwards: false);
-		SwapArchitectSkeletonData(ArchitectPhaseThreeSkeletonDataPath);
-		ApplyArchitectVisuals(ArchitectPhaseFourTint, 1.2f, preservePosition: true);
+		await TryApplyPhaseTransitionVisualsAsync("EnterPhaseFour", ArchitectPhaseFourTint, 1.2f, movingRightwards: false, ArchitectPhaseThreeSkeletonDataPath);
 		UpdateTorchGradient(BlackFireGradient);
 		EnsurePhaseThreeAura();
 		EnsureMushroomVfx();
@@ -738,6 +734,8 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		// As shadows materialize: Architect taunts.
 		ShowArchitectSpeech(GetPhaseFourShadowSummonSpeech(), VfxColor.Black, 2.8);
 		await Cmd.Wait(0.5f, false);
+		// Revive dead co-op players to the HP floor before the merchant check.
+		await RevivePlayersForPhaseFourAsync();
 		// After shadows rise: Merchant NPC appears and heals/revives qualifying players.
 		bool merchantOffered = ShouldMerchantHeal();
 		await ShowMerchantHealSequenceAsync();

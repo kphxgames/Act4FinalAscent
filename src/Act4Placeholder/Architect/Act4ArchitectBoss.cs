@@ -43,6 +43,8 @@ using MegaCrit.Sts2.Core.Entities.Gold;
 using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.Models.Potions;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Settings;
 
 namespace Act4Placeholder;
 
@@ -127,7 +129,10 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 
 	public override bool ShouldDisappearFromDoom => IsPhaseFour;
 
-	public override bool ShouldFadeAfterDeath => IsPhaseFour;
+	// Instant mode: NMonsterDeathVfx.Create returns null, and AnimDie's MoveChild crashes on null.
+	// Guard here so Phase 4 death still gets its fade VFX in normal/fast gameplay.
+	public override bool ShouldFadeAfterDeath =>
+		IsPhaseFour && SaveManager.Instance?.PrefsSave.FastMode != FastModeType.Instant;
 
 		public bool HasTriggeredPhaseOneSummon { get; set; }
 

@@ -44,11 +44,18 @@ using MegaCrit.Sts2.Core.Entities.Gold;
 using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.Models.Potions;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Settings;
 
 namespace Act4Placeholder;
 
 public sealed partial class Act4ArchitectBoss : MonsterModel
 {
+	private static readonly MethodInfo[] MonsterSetupSkinsMethods = typeof(MonsterModel)
+		.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+		.Where(static method => method.Name == nameof(SetupSkins))
+		.ToArray();
+
 	private int _ambientPulseCount;
 
 	private bool _phaseFourFinishRunQueued;
@@ -302,6 +309,12 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 	/// ZH: 在整场战斗中维持Boss的环境特效循环。
 	private async Task RunAmbientVfxLoopAsync(int loopGeneration)
 	{
+		// EN: In Instant mode (e.g. BetterSpire2 "Instant Fast Mode"), Cmd.Wait returns immediately,
+		//     turning this loop into a tight spin that floods the scene with VFX objects and stalls
+		//     RoomFadeIn, causing a black-screen soft-lock. VFX are cosmetic-only; skip entirely.
+		// ZH: 即时模式下Cmd.Wait立即返回，此循环死循环堆积特效对象并阻塞RoomFadeIn（黑屏卡死）。纯视觉特效，直接跳过。
+		if (SaveManager.Instance?.PrefsSave.FastMode == FastModeType.Instant)
+			return;
 		LogArchitect("RunAmbientVfxLoop:start");
 		while (ShouldKeepAmbientVfxAlive(loopGeneration))
 		{
@@ -571,34 +584,34 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 
 	private void SwapArchitectSkeletonData(string skeletonDataPath)
 	{
-		if (string.IsNullOrWhiteSpace(skeletonDataPath))
-		{
-			return;
-		}
-		NCombatRoom instance = NCombatRoom.Instance;
-		NCreature creatureNode = ((instance != null) ? instance.GetCreatureNode(((MonsterModel)this).Creature) : null);
-		MegaSprite spineController = creatureNode?.SpineController;
-		if (spineController == null)
-		{
-			LogArchitect($"SwapArchitectSkeletonData:missing-controller path={skeletonDataPath}");
-			return;
-		}
-		string animationName = "idle_loop";
 		try
 		{
-			MegaTrackEntry current = spineController.GetAnimationState().GetCurrent(0);
-			string currentAnimationName = current.GetAnimation().GetName();
-			if (!string.IsNullOrWhiteSpace(currentAnimationName))
+			if (string.IsNullOrWhiteSpace(skeletonDataPath))
 			{
-				animationName = currentAnimationName;
+				return;
 			}
-		}
-		catch (Exception ex)
-		{
-			LogArchitect($"SwapArchitectSkeletonData:anim-read-failed path={skeletonDataPath} error={ex.Message}");
-		}
-		try
-		{
+			NCombatRoom instance = NCombatRoom.Instance;
+			NCreature creatureNode = ((instance != null) ? instance.GetCreatureNode(((MonsterModel)this).Creature) : null);
+			MegaSprite spineController = ModSupport.TryGetCreatureSpineController(creatureNode);
+			if (spineController == null)
+			{
+				LogArchitect($"SwapArchitectSkeletonData:missing-controller path={skeletonDataPath}");
+				return;
+			}
+			string animationName = "idle_loop";
+			try
+			{
+				MegaTrackEntry current = spineController.GetAnimationState().GetCurrent(0);
+				string currentAnimationName = current.GetAnimation().GetName();
+				if (!string.IsNullOrWhiteSpace(currentAnimationName))
+				{
+					animationName = currentAnimationName;
+				}
+			}
+			catch (Exception ex)
+			{
+				LogArchitect($"SwapArchitectSkeletonData:anim-read-failed path={skeletonDataPath} error={ex.Message}");
+			}
 			Resource resource = ResourceLoader.Load(skeletonDataPath, string.Empty, ResourceLoader.CacheMode.Ignore);
 			if (resource == null)
 			{
@@ -619,7 +632,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 			}
 			spineController.SetSkeletonDataRes(new MegaSkeletonDataResource(resource));
 			MegaAnimationState animationState = spineController.GetAnimationState();
-			((MonsterModel)this).SetupSkins(creatureNode.Visuals);
+			TrySetupSkinsCompat(creatureNode.Visuals, spineController);
 			if (!spineController.HasAnimation(animationName))
 			{
 				animationName = "idle_loop";
@@ -634,7 +647,50 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		}
 		catch (Exception ex)
 		{
-			LogArchitect($"SwapArchitectSkeletonData:apply-failed path={skeletonDataPath} error={ex.Message}");
+			LogArchitect($"SwapArchitectSkeletonData:apply-failed path={skeletonDataPath} error={ex.GetType().Name}: {ex.Message}");
+		}
+	}
+
+	private async Task TryApplyPhaseTransitionVisualsAsync(string transitionName, Color tint, float targetScale, bool movingRightwards, string skeletonDataPath)
+	{
+		try
+		{
+			await PlayPhaseTransitionBurstAsync(tint, targetScale, movingRightwards);
+			SwapArchitectSkeletonData(skeletonDataPath);
+			ApplyArchitectVisuals(tint, targetScale, preservePosition: true);
+		}
+		catch (Exception ex)
+		{
+			LogArchitect($"{transitionName}:visual-transition-failed error={ex.GetType().Name}: {ex.Message}");
+		}
+	}
+
+	private void TrySetupSkinsCompat(NCreatureVisuals visuals, MegaSprite spineController)
+	{
+		try
+		{
+			MegaSkeleton skeleton = spineController.GetSkeleton();
+			foreach (MethodInfo method in MonsterSetupSkinsMethods)
+			{
+				ParameterInfo[] parameters = method.GetParameters();
+				if (parameters.Length == 1 && parameters[0].ParameterType.IsInstanceOfType(visuals))
+				{
+					method.Invoke(this, new object[] { visuals });
+					return;
+				}
+				if (parameters.Length == 2 &&
+					parameters[0].ParameterType.IsInstanceOfType(spineController) &&
+					parameters[1].ParameterType.IsInstanceOfType(skeleton))
+				{
+					method.Invoke(this, new object[] { spineController, skeleton });
+					return;
+				}
+			}
+			LogArchitect("TrySetupSkinsCompat:no-compatible-overload");
+		}
+		catch (Exception ex)
+		{
+			LogArchitect($"TrySetupSkinsCompat:failed error={ex.Message}");
 		}
 	}
 

@@ -23,6 +23,8 @@ using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Settings;
 
 namespace Act4Placeholder;
 
@@ -64,6 +66,11 @@ public abstract class ArchitectShadowChampion : MonsterModel
 
 	public override int MaxInitialHp => ((MonsterModel)this).MinInitialHp;
 
+	// Instant mode: NMonsterDeathVfx.Create returns null, and AnimDie's MoveChild crashes on null.
+	// Guard here so normal/fast gameplay still gets the fade VFX.
+	public override bool ShouldFadeAfterDeath =>
+		SaveManager.Instance?.PrefsSave.FastMode != FastModeType.Instant;
+
 	public override async Task AfterAddedToRoom()
 	{
 		await base.AfterAddedToRoom();
@@ -84,7 +91,7 @@ public abstract class ArchitectShadowChampion : MonsterModel
 			((CanvasItem)canvasGroup).SetSelfModulate(ShadowTint);
 		}
 		creatureNode?.ScaleTo(1f, 0f);
-		Node2D body = creatureNode?.SpineController?.BoundObject as Node2D;
+		Node2D body = ModSupport.TryGetCreatureBodyNode(creatureNode);
 		if (body != null && body.Scale.X > 0f)
 		{
 			body.Scale *= new Vector2(-1f, 1f);

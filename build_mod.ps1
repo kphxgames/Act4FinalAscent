@@ -46,7 +46,7 @@ function Sync-LocalizationFallbackKeys {
 
     foreach ($englishFile in $englishFiles) {
         $englishPath = $englishFile.FullName
-        $englishRaw = Get-Content $englishPath -Raw
+        $englishRaw = Get-Content $englishPath -Raw -Encoding UTF8
         $englishObj = $englishRaw | ConvertFrom-Json
         $englishMap = Convert-JsonObjectToOrderedHashtable -JsonObject $englishObj
 
@@ -60,7 +60,7 @@ function Sync-LocalizationFallbackKeys {
 
             $targetObj = $null
             try {
-                $targetRaw = Get-Content $targetPath -Raw
+                $targetRaw = Get-Content $targetPath -Raw -Encoding UTF8
                 $targetObj = $targetRaw | ConvertFrom-Json
             } catch {
                 Copy-Item $englishPath $targetPath -Force

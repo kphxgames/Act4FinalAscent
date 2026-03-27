@@ -7,6 +7,7 @@ using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Godot;
 
 namespace Act4Placeholder;
@@ -37,6 +38,15 @@ internal static class Act4Logger
 {
 	private static string? _logPath;
 	private static readonly object _lock = new();
+	private static string? _godotLogPath;
+	private static volatile int _godotLogOffsetHi; // high 32 bits of offset
+	private static volatile int _godotLogOffsetLo; // low  32 bits of offset
+
+	private static long GodotLogOffset
+	{
+		get => ((long)(uint)_godotLogOffsetHi << 32) | (uint)_godotLogOffsetLo;
+		set { _godotLogOffsetHi = (int)(value >> 32); _godotLogOffsetLo = (int)(value & 0xFFFFFFFFL); }
+	}
 
 	// Lines matching ANY of these patterns are excluded even when they would otherwise pass
 	// both the allow-list and PII filter.  Covers teardown / shutdown noise and high-volume
@@ -172,6 +182,9 @@ internal static class Act4Logger
 						if (IsSafe(line))
 							sb.AppendLine(Sanitize(line));
 					}
+					// Record where we stopped so the background poller can pick up new lines later.
+					GodotLogOffset = fs.Length;
+					_godotLogPath = godotLog;
 				}
 				catch (IOException)
 				{
@@ -187,6 +200,10 @@ internal static class Act4Logger
 			sb.AppendLine("=== Mod Init ===");
 
 			File.WriteAllText(_logPath, sb.ToString(), Encoding.UTF8);
+
+			// Start background poller to capture engine ERRORs/WARNINGs written to godot.log
+			// during gameplay (e.g. mid-boss-fight crashes that wouldn't be in the backfill).
+			_ = Task.Run(PollGodotLogLoopAsync);
 		}
 		catch (Exception ex)
 		{
@@ -238,5 +255,51 @@ internal static class Act4Logger
 		// Replace absolute OS paths (C:\...\file) with just the filename.
 		// Virtual paths like res:// and user:// are left intact.
 		return _absPathPattern.Replace(line, m => m.Groups[1].Value);
+	}
+
+	/// <summary>
+	/// Reads any new lines appended to godot.log since the last poll and appends
+	/// safe/filtered ones to our mod log. Called every 3 seconds by the background poller.
+	/// </summary>
+	private static void FlushGodotLog()
+	{
+		if (_godotLogPath == null || _logPath == null) return;
+		try
+		{
+			string output;
+			long newOffset;
+			using (var fs = new FileStream(_godotLogPath, FileMode.Open, System.IO.FileAccess.Read, FileShare.ReadWrite))
+			{
+				newOffset = fs.Length;
+				long current = GodotLogOffset;
+				if (newOffset <= current) return;
+				fs.Seek(current, SeekOrigin.Begin);
+				using var reader = new StreamReader(fs, Encoding.UTF8);
+				var sb = new StringBuilder();
+				string? line;
+				while ((line = reader.ReadLine()) != null)
+				{
+					if (IsSafe(line))
+						sb.AppendLine(Sanitize(line));
+				}
+				output = sb.ToString();
+			}
+			lock (_lock)
+			{
+				if (output.Length > 0)
+					File.AppendAllText(_logPath, output, Encoding.UTF8);
+				GodotLogOffset = newOffset;
+			}
+		}
+		catch { /* never crash on log poll */ }
+	}
+
+	private static async Task PollGodotLogLoopAsync()
+	{
+		while (true)
+		{
+			await Task.Delay(6000);
+			FlushGodotLog();
+		}
 	}
 }

@@ -94,7 +94,7 @@ public abstract class Phase4LinkedShadow : ArchitectShadowChampion
 		{
 			NCombatRoom? room = NCombatRoom.Instance;
 			NCreature? creatureNode = room?.GetCreatureNode(((MonsterModel)this).Creature);
-			Node2D body = creatureNode?.SpineController?.BoundObject as Node2D;
+			Node2D body = ModSupport.TryGetCreatureBodyNode(creatureNode);
 			if (body != null)
 			{
 				Vector2 bodyScale = body.Scale;

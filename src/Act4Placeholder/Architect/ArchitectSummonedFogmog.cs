@@ -25,6 +25,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.MonsterMoves;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.MonsterMoves.MonsterMoveStateMachine;
+using MegaCrit.Sts2.Core.Saves;
+using MegaCrit.Sts2.Core.Settings;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Act4Placeholder;
@@ -72,6 +74,11 @@ internal sealed class ArchitectSummonedFogmog : MonsterModel
 	public override int MinInitialHp => FogmogHp;
 
 	public override int MaxInitialHp => MinInitialHp;
+
+	// Instant mode: NMonsterDeathVfx.Create returns null, and AnimDie's MoveChild crashes on null.
+	// Guard here so normal/fast gameplay still gets the fade VFX.
+	public override bool ShouldFadeAfterDeath =>
+		SaveManager.Instance?.PrefsSave.FastMode != FastModeType.Instant;
 
 	private int FlurryDamage => FlurryHitDamage;
 

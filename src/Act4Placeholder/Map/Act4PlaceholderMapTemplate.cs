@@ -5,6 +5,7 @@
 //=============================================================================
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Ascension;
 using MegaCrit.Sts2.Core.Helpers;
@@ -68,48 +69,30 @@ public sealed class Act4PlaceholderMapTemplate : ActModel
 		int shops = 2;
 		int unknowns = 3;
 		int rests = AscensionHelper.HasAscension((AscensionLevel)6) ? 1 : 2;
-		// Stable branch constructor takes Rng; beta branch changed it to ActMap.
-		// Use reflection to find whichever constructor is present at runtime.
-		MapPointTypeCounts counts = CreateMapPointTypeCounts(mapRng);
-		// Beta branch made some properties read-only; use reflection as a fallback.
-		TrySetProperty(counts, nameof(MapPointTypeCounts.NumOfElites), elites);
-		TrySetProperty(counts, nameof(MapPointTypeCounts.NumOfShops), shops);
-		TrySetProperty(counts, nameof(MapPointTypeCounts.NumOfUnknowns), unknowns);
-		TrySetProperty(counts, nameof(MapPointTypeCounts.NumOfRests), rests);
+		return CreateMapPointTypeCounts(elites, shops, unknowns, rests);
+	}
+
+	private static MapPointTypeCounts CreateMapPointTypeCounts(int elites, int shops, int unknowns, int rests)
+	{
+		MapPointTypeCounts counts = (MapPointTypeCounts)FormatterServices.GetUninitializedObject(typeof(MapPointTypeCounts));
+		TrySetMember(counts, nameof(MapPointTypeCounts.PointTypesThatIgnoreRules), new HashSet<MapPointType>());
+		TrySetMember(counts, nameof(MapPointTypeCounts.NumOfElites), elites);
+		TrySetMember(counts, nameof(MapPointTypeCounts.NumOfShops), shops);
+		TrySetMember(counts, nameof(MapPointTypeCounts.NumOfUnknowns), unknowns);
+		TrySetMember(counts, nameof(MapPointTypeCounts.NumOfRests), rests);
 		return counts;
 	}
 
-	private static MapPointTypeCounts CreateMapPointTypeCounts(Rng mapRng)
-	{
-		// Try Rng constructor (stable), then single-arg of any type (beta), then parameterless.
-		foreach (ConstructorInfo ctor in typeof(MapPointTypeCounts).GetConstructors())
-		{
-			ParameterInfo[] parameters = ctor.GetParameters();
-			if (parameters.Length == 1 && parameters[0].ParameterType == typeof(Rng))
-				return (MapPointTypeCounts)ctor.Invoke(new object[] { mapRng });
-		}
-		// Beta: constructor takes ActMap or another type — pass mapRng anyway via Activator
-		// which will find a compatible overload, or fall back to first single-arg ctor.
-		foreach (ConstructorInfo ctor in typeof(MapPointTypeCounts).GetConstructors())
-		{
-			ParameterInfo[] parameters = ctor.GetParameters();
-			if (parameters.Length == 1)
-				return (MapPointTypeCounts)ctor.Invoke(new object[] { System.Activator.CreateInstance(parameters[0].ParameterType, mapRng) });
-		}
-		return (MapPointTypeCounts)System.Activator.CreateInstance(typeof(MapPointTypeCounts))!;
-	}
-
-	private static void TrySetProperty(MapPointTypeCounts counts, string propertyName, int value)
+	private static void TrySetMember(MapPointTypeCounts counts, string propertyName, object value)
 	{
 		PropertyInfo? prop = typeof(MapPointTypeCounts).GetProperty(propertyName);
-		if (prop == null) return;
-		MethodInfo? setter = prop.GetSetMethod() ?? prop.GetSetMethod(true);
+		MethodInfo? setter = prop?.GetSetMethod() ?? prop?.GetSetMethod(true);
 		if (setter != null)
 		{
 			setter.Invoke(counts, new object[] { value });
 			return;
 		}
-		// init-only or truly read-only: write the backing field directly.
+
 		FieldInfo? field = typeof(MapPointTypeCounts).GetField($"<{propertyName}>k__BackingField",
 			BindingFlags.Instance | BindingFlags.NonPublic);
 		field?.SetValue(counts, value);
