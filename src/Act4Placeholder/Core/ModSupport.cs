@@ -267,6 +267,16 @@ internal static class ModSupport
 
 	private static bool _act4WeakestBuffLoaded;
 
+	// EN: Pending host→client join sync state. Set from ClientLoadJoinSyncPatch when the client receives a
+	//     ClientLoadJoinResponseMessage that contains our extra Act4 state bytes. Consumed once by
+	//     RestoreAct4FlagsFromSave so the brutal flag and weakest buff grants match the host.
+	// ZH: 主机→客户端加入同步的待处理状态。当客户端收到含有Act4额外状态字节的
+	//     ClientLoadJoinResponseMessage时由ClientLoadJoinSyncPatch设置，
+	//     并被RestoreAct4FlagsFromSave消费一次，用于确保残暴模式标志和最弱增益赠予与主机一致。
+	private static bool? _pendingJoinBrutalOverride;
+	private static List<ulong>? _pendingJoinWeakestBuffIds;
+	private static long _pendingJoinSyncRunStartTime;
+
 	private static int _act4WeakestBuffProfileId = -1;
 
 	private static bool _act4PrefsLoaded;
@@ -748,10 +758,90 @@ internal static class ModSupport
 		{
 			return;
 		}
-		SetAct4Brutal(runState, IsTrackedBrutalAct4Run(run));
+		// EN: If this client received brutal/weakest-buff sync from the host via ClientLoadJoinResponseMessage,
+		//     apply it instead of reading our local disk files (which clients don't have).
+		// ZH: 若此客户端通过ClientLoadJoinResponseMessage收到来自主机的残暴/最弱增益同步，
+		//     则使用该同步数据而非读取本地磁盘文件（客户端不拥有这些文件）。
+		bool isBrutal;
+		if (_pendingJoinBrutalOverride.HasValue && _pendingJoinSyncRunStartTime == run.StartTime)
+		{
+			isBrutal = _pendingJoinBrutalOverride.Value;
+			if (_pendingJoinWeakestBuffIds != null)
+			{
+				EnsureWeakestBuffGrantsLoaded();
+				string runKey = BuildAct3SnapshotKey(run.StartTime, run.SerializableRng?.Seed ?? string.Empty, run.Ascension, run.Players?.Count ?? 0);
+				if (!string.IsNullOrWhiteSpace(runKey))
+				{
+					lock (RunDamageContributionLock)
+					{
+						foreach (ulong playerId in _pendingJoinWeakestBuffIds)
+							Act4WeakestBuffGrantedKeys.Add($"{runKey}|{playerId}");
+					}
+				}
+			}
+			_pendingJoinBrutalOverride = null;
+			_pendingJoinWeakestBuffIds = null;
+			_pendingJoinSyncRunStartTime = 0;
+		}
+		else
+		{
+			isBrutal = IsTrackedBrutalAct4Run(run);
+		}
+		SetAct4Brutal(runState, isBrutal);
 		RestoreBookChoicesFromSave(run);
 		EnsureRunDamageContributionsLoaded();
 		EnsureWeakestBuffGrantsLoaded();
+	}
+
+	/// <summary>
+	/// EN: Called by ClientLoadJoinSyncPatch (Deserialize Postfix) on clients when they receive
+	///     the host's Act4 state bytes appended to ClientLoadJoinResponseMessage.
+	/// ZH: 当客户端在ClientLoadJoinResponseMessage中收到主机附加的Act4状态字节时，
+	///     由ClientLoadJoinSyncPatch（Deserialize Postfix）调用。
+	/// </summary>
+	internal static void SetPendingJoinSyncState(long runStartTime, bool isBrutal, List<ulong> weakestBuffPlayerIds)
+	{
+		_pendingJoinBrutalOverride = isBrutal;
+		_pendingJoinWeakestBuffIds = weakestBuffPlayerIds;
+		_pendingJoinSyncRunStartTime = runStartTime;
+	}
+
+	/// <summary>
+	/// EN: Reads the brutal flag for the given run from the host's local disk (used by Serialize Postfix to
+	///     embed the flag for clients). Falls back gracefully if data is unavailable.
+	/// ZH: 从主机本地磁盘读取指定运行的残暴标志（供Serialize Postfix嵌入给客户端使用）。不可用时优雅降级。
+	/// </summary>
+	internal static bool GetBrutalFlagForRun(SerializableRun run)
+	{
+		try { return IsTrackedBrutalAct4Run(run); }
+		catch { return false; }
+	}
+
+	/// <summary>
+	/// EN: Returns the NetIds of all players with weakest-buff entitlement for the given run.
+	///     Used by Serialize Postfix to embed the list for clients.
+	/// ZH: 返回指定运行中所有拥有最弱增益权利的玩家NetID列表。供Serialize Postfix嵌入给客户端使用。
+	/// </summary>
+	internal static List<ulong> GetWeakestBuffPlayerIdsForRun(SerializableRun run)
+	{
+		try
+		{
+			EnsureWeakestBuffGrantsLoaded();
+			string prefix = BuildAct3SnapshotKey(run.StartTime, run.SerializableRng?.Seed ?? string.Empty, run.Ascension, run.Players?.Count ?? 0) + "|";
+			if (string.IsNullOrWhiteSpace(prefix)) return new List<ulong>();
+			lock (RunDamageContributionLock)
+			{
+				var result = new List<ulong>();
+				foreach (string key in Act4WeakestBuffGrantedKeys)
+				{
+					if (key.StartsWith(prefix, StringComparison.Ordinal)
+						&& ulong.TryParse(key[prefix.Length..], out ulong playerId))
+						result.Add(playerId);
+				}
+				return result;
+			}
+		}
+		catch { return new List<ulong>(); }
 	}
 
 	internal static void SaveAct3SnapshotFromRunState(RunState? runState)

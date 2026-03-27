@@ -1394,6 +1394,9 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		ShowArchitectSpeech("Enough.\nYour turn is over.", IsPhaseThree ? VfxColor.Black : (IsPhaseTwo ? VfxColor.Purple : VfxColor.Blue), 3f);
 		NPowerUpVfx.CreateGhostly(((MonsterModel)this).Creature);
 		NPlayerHand.Instance?.CancelAllCardPlay();
+		// Refresh card indices after cancel so any card stuck mid-play (e.g. Prepared's
+		// discard picker interrupted by retaliation) snaps back to its correct position.
+		NPlayerHand.Instance?.ForceRefreshCardIndices();
 		// Force-close any open card selection overlay (e.g. Prepared's discard picker)
 		// to prevent soft-lock when retaliation ends the turn mid-selection.
 		NOverlayStack.Instance?.Clear();
