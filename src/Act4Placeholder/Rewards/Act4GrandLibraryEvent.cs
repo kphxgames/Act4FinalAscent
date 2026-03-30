@@ -119,7 +119,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 			new EventOption(
 				this,
 				(Func<Task>)TakeHolyBookAsync,
-				L("The Holy Tome", "圣典",
+				L("The Holy Tome", "神圣宝典",
 					fra: "Le Tome Sacré", deu: "Das Heilige Buch", jpn: "聖典", kor: "성서", por: "O Tomo Sagrado", rus: "Святой Том", spa: "El Tomo Sagrado"),
 				L("Affects the Architect's resistance to debuffs.",
 					"影响建筑师对减益的抗性。",
@@ -136,8 +136,8 @@ public sealed class Act4GrandLibraryEvent : EventModel
 					Tip(
 						"Holy Tome Details",
 						"Adaptive Resistance efficacy is halved. Expels only newly added Poison/Doom stacks. Turn-start debuff clear is 15%. Negative Strength can remain below 0.",
-						"圣典效果详情",
-						"自适应抗性效能减半。仅驱散本次新增的毒素/厄运层数。回合开始减益清除为15%。负力量可保留为负值。",
+                        "神圣宝典",
+                        "建筑师的自适应抗性效果减半。每次驱散[gold]剧毒[/gold]和[gold]灾厄[/gold]时不同时驱散建筑师身上的层数；建筑师回合开始时仅清除[blue]15%[/blue]的所有的负面效果且力量被降至负值时不再转移给所有玩家和重置力量。",
 						titleFra: "Détails du Tome sacré",
 						descFra: "L'efficacité de Résistance adaptative est divisée par deux. Expulse uniquement les charges nouvellement ajoutées de Poison/Condamnation. Purge des affaiblissements au début du tour: 15 %. La Force négative peut rester sous 0.",
 						titleDeu: "Details des Heiligen Buchs",
@@ -157,7 +157,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 			new EventOption(
 				this,
 				(Func<Task>)TakeShadowBookAsync,
-				L("The Shadow Tome", "影典",
+				L("The Shadow Tome", "暗影宝典",
 					fra: "Le Tome des Ombres", deu: "Das Schattenbuch", jpn: "影の典", kor: "그림자 서", por: "O Tomo das Sombras", rus: "Теневой Том", spa: "El Tomo de las Sombras"),
 				L("Affects the strength of the Architect's minions.",
 					"影响建筑师召唤物的强度。",
@@ -174,8 +174,8 @@ public sealed class Act4GrandLibraryEvent : EventModel
 					Tip(
 						"Shadow Tome Details",
 						"Player damage against Architect-summoned minions is doubled.",
-						"影典效果详情",
-						"玩家对建筑师召唤物造成的伤害翻倍。",
+                        "暗影宝典",
+						"所有玩家对建筑师召唤物造成的伤害翻倍。",
 						titleFra: "Détails du Tome des ombres",
 						descFra: "Les dégâts des joueurs contre les sbires invoqués par l'Architecte sont doublés.",
 						titleDeu: "Details des Schattenbuchs",
@@ -195,7 +195,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 			new EventOption(
 				this,
 				(Func<Task>)TakeSilverBookAsync,
-				L("The Silver Tome", "银典",
+				L("The Silver Tome", "白银宝典",
 					fra: "Le Tome d'Argent", deu: "Das Silberbuch", jpn: "銀の典", kor: "은빛 서", por: "O Tomo de Prata", rus: "Серебряный Том", spa: "El Tomo de Plata"),
 				L("Affects the Architect's defensive power.",
 					"影响建筑师的防御能力。",
@@ -212,8 +212,8 @@ public sealed class Act4GrandLibraryEvent : EventModel
 					Tip(
 						"Silver Tome Details",
 						"Architect cannot retain Block and cannot gain Block from its mechanics. Each player gains Block equal to 5% max HP at player-turn start.",
-						"银典效果详情",
-						"建筑师无法保留格挡，且无法从其机制获得格挡。每位玩家在自己回合开始时获得等于最大生命值5%的格挡。",
+                        "白银宝典",
+						"建筑师无法保留格挡，且无法从其他机制获得格挡。所有玩家回合开始时获得等于最大生命值5%的格挡。",
 						titleFra: "Détails du Tome d'argent",
 						descFra: "L'Architecte ne peut ni conserver ni gagner de Défense via ses mécaniques. Chaque joueur gagne une Défense égale à 5 % de ses PV max au début de son tour.",
 						titleDeu: "Details des Silberbuchs",
@@ -233,7 +233,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 			new EventOption(
 				this,
 				(Func<Task>)TakeCursedBookAsync,
-				L("The Cursed Tome", "诅咒典",
+				L("The Cursed Tome", "诅咒宝典",
 					fra: "Le Tome Maudit", deu: "Das Verfluchte Buch", jpn: "呪いの典", kor: "저주받은 서", por: "O Tomo Amaldiçoado", rus: "Проклятый Том", spa: "El Tomo Maldito"),
 				L("Affects the Architect's damage mechanics.",
 					"影响建筑师的伤害机制。",
@@ -250,8 +250,8 @@ public sealed class Act4GrandLibraryEvent : EventModel
 					Tip(
 						"Cursed Tome Details",
 						"Architect loses Readings and Block Piercer. Players: +2 max Energy, +2 draw/turn, but gain 99 Vulnerable/Weak/Frail.",
-						"诅咒典效果详情",
-						"建筑师失去解读与穿透格挡。玩家：最大能量+2、每回合额外摸2，但获得99层易伤/虚弱/脆弱。",
+                        "诅咒宝典",
+                        "建筑师将失去解读与穿透格挡能力。所有玩家将在每回合开始时额外获得[blue]2[/blue]点[gold]能量[/gold]和抽取[blue]2[/blue]张卡牌，[red]建筑师的攻击欲望会更频繁且所有玩家获得99层易伤/虚弱/脆弱[/red]。",
 						titleFra: "Détails du Tome maudit",
 						descFra: "L'Architecte perd Lectures et Perce-bloc. Joueurs : +2 Énergie max, +2 pioche/tour, mais gagnent 99 Vulnérable/Faible/Fragile.",
 						titleDeu: "Details des Verfluchten Buchs",
@@ -279,7 +279,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 		ModSupport.PersistBookChoiceNow();
 		SetEventFinished(L(
 			"You pocket the Holy Tome. The Architect's divine ward is sealed.",
-			"你收起了圣典。建筑师的神圣庇护被封印了。",
+			"你收起了神圣宝典。建筑师的神圣庇护被封印了。",
 			fra: "Vous empochez le Tome Sacré. La protection divine de l'Architecte est scellée.",
 			deu: "Ihr steckt das Heilige Buch ein. Der göttliche Schutz des Architekten ist versiegelt.",
 			jpn: "聖典をポケットに入れた。建築家の神聖な守護は封じられた。",
@@ -299,7 +299,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 		ModSupport.PersistBookChoiceNow();
 		SetEventFinished(L(
 			"You pocket the Shadow Tome. The Architect's shadow grows dim.",
-			"你收起了影典。建筑师的暗影渐渐暗淡。",
+			"你收起了暗影宝典。建筑师的暗影渐渐暗淡。",
 			fra: "Vous empochez le Tome des Ombres. L'ombre de l'Architecte s'assombrit.",
 			deu: "Ihr steckt das Schattenbuch ein. Der Schatten des Architekten wird schwächer.",
 			jpn: "影の典をポケットに入れた。建築家の影は薄れていく。",
@@ -319,7 +319,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 		ModSupport.PersistBookChoiceNow();
 		SetEventFinished(L(
 			"You pocket the Silver Tome. The Architect's eternal shield shatters.",
-			"你收起了银典。建筑师的永恒护盾破碎了。",
+			"你收起了白银宝典。建筑师的永恒护盾破碎了。",
 			fra: "Vous empochez le Tome d'Argent. Le bouclier éternel de l'Architecte se brise.",
 			deu: "Ihr steckt das Silberbuch ein. Der ewige Schild des Architekten zerbricht.",
 			jpn: "銀の典をポケットに入れた。建築家の永遠の盾が砕け散った。",
@@ -339,7 +339,7 @@ public sealed class Act4GrandLibraryEvent : EventModel
 		ModSupport.PersistBookChoiceNow();
 		SetEventFinished(L(
 			"You pocket the Cursed Tome. Forbidden knowledge seeps into your mind.",
-			"你收起了诅咒典。禁忌知识渗入你的脑海。",
+			"你收起了诅咒宝典。禁忌知识渗入你的脑海。",
 			fra: "Vous empochez le Tome Maudit. Des connaissances interdites s'infiltrent dans votre esprit.",
 			deu: "Ihr steckt das Verfluchte Buch ein. Verbotenes Wissen dringt in euren Geist ein.",
 			jpn: "呪いの典をポケットに入れた。禁断の知識が心に忍び込む。",
