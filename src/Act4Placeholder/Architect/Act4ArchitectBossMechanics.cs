@@ -109,6 +109,20 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		if (target == ((MonsterModel)this).Creature && props.HasFlag(ValueProp.Unpowered))
 		{
 			LogArchitect($"AfterDamageReceived:skip-unpowered hp={((MonsterModel)this).Creature.CurrentHp}/{((MonsterModel)this).Creature.MaxHp} unblocked={result.UnblockedDamage} pending={PendingPhaseNumber} phase={PhaseNumber}");
+			// Still check summon thresholds for non-attack damage (poison, orbs, etc.)
+			if (result.UnblockedDamage > 0 && !((MonsterModel)this).Creature.IsDead)
+			{
+				await SyncArchitectBarricadeAsync();
+				try
+				{
+					await TryTriggerImmediatePhaseSummonAsync();
+				}
+				catch (System.Exception ex)
+				{
+					GD.PrintErr($"[Act4Placeholder] TryTriggerImmediatePhaseSummonAsync (unpowered) failed: {ex}");
+				}
+				await TryTriggerEmergencyFogmogAsync();
+			}
 			return;
 		}
 		if (target == ((MonsterModel)this).Creature)
@@ -444,7 +458,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 			if (shadow == null) continue;
 			shadow.BonusHpMultiplier = hpMultiplier;
 			shadow.BonusDamageMultiplier = damageMultiplier;
-			shadow.FlatHeavyDamageBonus += 2;
+			shadow.FlatHeavyDamageBonus += 1;
 			shadow.FlatMultiDamageBonus += 1;
 			Creature? creature = await SummonSpecificMinionAsync(shadow);
 			if (creature == null) break;
@@ -917,6 +931,11 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		return _enemyTurnCount + ((((MonsterModel)this).CombatState?.CurrentSide == CombatSide.Enemy) ? 2 : 1);
 	}
 
+	private int GetUpcomingPhaseTurnNumberForStrength()
+	{
+		return _phaseTurnCount + ((((MonsterModel)this).CombatState?.CurrentSide == CombatSide.Enemy) ? 2 : 1);
+	}
+
 	// EN: Preview-only helper. This mirrors the passive strength cadence so move planning can show the extra Buff intent up front.
 	// ZH: 纯预览辅助。它复刻被动力量的节奏，让招式规划一开始就能把额外增益意图显示出来。
 	private bool ShouldShowStrengthBuffIntentForUpcomingMove()
@@ -925,15 +944,16 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		{
 			return false;
 		}
-		int nextCount = GetUpcomingEnemyTurnNumberForNextMoveSelection();
+		int nextPhaseTurn = GetUpcomingPhaseTurnNumberForStrength();
 		int strengthCap = GetCurrentStrengthCap();
 		int currentStrength = ((MonsterModel)this).Creature.GetPower<StrengthPower>()?.Amount ?? 0;
 		int underCapCadence = GetUnderCapStrengthCadence();
-		if (currentStrength < strengthCap && (underCapCadence <= 1 || nextCount % underCapCadence == 1))
+		// Strength cadence starts on turn 2 of each phase (skip turn 1).
+		if (nextPhaseTurn >= 2 && currentStrength < strengthCap && (underCapCadence <= 1 || (nextPhaseTurn - 2) % underCapCadence == 0))
 		{
 			return true;
 		}
-		return currentStrength >= strengthCap && nextCount % GetOverCapStrengthCadence() == 0;
+		return nextPhaseTurn >= 2 && currentStrength >= strengthCap && (nextPhaseTurn - 2) % GetOverCapStrengthCadence() == 0;
 	}
 
 	private MoveState? GetPreviewAdjustedMoveState(MoveState? baseState)
@@ -1284,6 +1304,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 			return;
 		}
 		int desiredAmount = (IsPhaseThree && GetCurrentSummonedShadowCount() > 0) ? GetSummonLinkedThornsAmount() : 0;
+		bool allShadowsJustDied = desiredAmount == 0 && _hasPersistentSummonThorns;
 		if (desiredAmount == 0 && !_hasPersistentSummonThorns && ((MonsterModel)this).Creature.GetPower<ThornsPower>() != null)
 		{
 			await PowerCmd.Remove<ThornsPower>(((MonsterModel)this).Creature);
@@ -1310,6 +1331,15 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 			await PowerCmd.Apply<ArchitectSummonThornsPower>(((MonsterModel)this).Creature, (decimal)desiredAmount, ((MonsterModel)this).Creature, (CardModel)null, false);
 			_hasPersistentSummonThorns = true;
 			_persistentSummonThornsAmount = desiredAmount;
+		}
+		// When all Phase 3 shadows are eliminated, stun the Architect for a turn.
+		if (allShadowsJustDied && !((MonsterModel)this).Creature.IsDead && !IsAwaitingPhaseTransition)
+		{
+			LogArchitect("SyncSummonLinkedThorns:all-shadows-dead-stun");
+			await PowerCmd.SetAmount<ArchitectStunnedPower>(((MonsterModel)this).Creature, 1m, ((MonsterModel)this).Creature, (CardModel)null);
+			await CreatureCmd.Stun(((MonsterModel)this).Creature, PhaseThreeStunnedMove, "PHASE_THREE_RANDOM");
+			AddCombatVfx(NStunnedVfx.Create(((MonsterModel)this).Creature));
+			ShowArchitectSpeech("The shadows... unmade.", VfxColor.Black, 3.2);
 		}
 		_pendingSummonLinkedThornsSync = false;
 	}
@@ -1511,6 +1541,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		{
 			await PowerCmd.SetAmount<ArchitectStunnedPower>(((MonsterModel)this).Creature, 1m, ((MonsterModel)this).Creature, (CardModel)null);
 			await CreatureCmd.Stun(((MonsterModel)this).Creature, PhaseTwoStunnedMove, "PHASE_TWO_RANDOM");
+			AddCombatVfx(NStunnedVfx.Create(((MonsterModel)this).Creature));
 			ShowArchitectSpeech("Too much.", VfxColor.Purple, 2.4);
 			LogArchitect($"AllOrNothing:stunned damagePercent={damagePercent} thresholdPercent={thresholdPercent}");
 			return;

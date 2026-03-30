@@ -19,11 +19,11 @@ public sealed class ShadowIronclad : ArchitectShadowChampion
 {
 	protected override string ShadowVisualsPath => "res://scenes/creature_visuals/ironclad.tscn";
 
-	protected override int BaseMultiDamage => 4;
+	protected override int BaseMultiDamage => 5;
 
-	protected override int MultiHits => 6;
+	protected override int MultiHits => 5;
 
-	protected override int BaseHeavyDamage => 18;
+	protected override int BaseHeavyDamage => 16;
 
 	protected override async Task BuffMove(IReadOnlyList<Creature> _)
 	{

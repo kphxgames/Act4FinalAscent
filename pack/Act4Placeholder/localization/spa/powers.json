@@ -48,8 +48,8 @@
   "SPORE_NOURISHMENT_POWER.title": "Nutrición de esporas",
   "SPORE_NOURISHMENT_POWER.description": "Al final de cada turno enemigo, [gold]El Arquitecto[/gold] cura el [blue]5%[/blue] de su PV máximo.",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "Espinas sombrías",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "El Arquitecto tiene [blue]{Amount}[/blue] [gold]Espinas[/gold] mientras haya [gold]Sombras[/gold] en el campo. Elimina las [gold]Sombras[/gold] para quitarle las [gold]Espinas[/gold] al Arquitecto.",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "El Arquitecto tiene [blue]{Amount}[/blue] [gold]Espinas[/gold] mientras haya [gold]Sombras[/gold] en el campo. Elimina las [gold]Sombras[/gold] para quitarle las [gold]Espinas[/gold] al Arquitecto."
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "El Arquitecto tiene [blue]{Amount}[/blue] [gold]Espinas[/gold] mientras haya [gold]Sombras[/gold] en el campo. Elimina todas las [gold]Sombras[/gold] para quitar las [gold]Espinas[/gold] y [gold]Aturdir[/gold] al Arquitecto por un turno.",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "El Arquitecto tiene [blue]{Amount}[/blue] [gold]Espinas[/gold] mientras haya [gold]Sombras[/gold] en el campo. Elimina todas las [gold]Sombras[/gold] para quitar las [gold]Espinas[/gold] y [gold]Aturdir[/gold] al Arquitecto por un turno."
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "Conocimiento prohibido",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "Estás maldito por el tomo prohibido del Arquitecto. Gana [blue]2[/blue] de máximo [gold]Energía[/gold] adicional y roba [blue]2[/blue] cartas extras por turno.",

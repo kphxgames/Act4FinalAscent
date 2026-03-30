@@ -71,6 +71,9 @@ internal static class Act4Config
 	/// EN: Ascension 9: flat +5% damage for all Act 4 enemies (normal + brutal). | ZH: 升华9：所有第四幕敌人+5%伤害（普通和残酷均适用）。
 	internal const decimal Ascension9DmgBonus = 0.05m;
 
+	/// EN: Elite room damage multiplier, applied to all Act 4 elite enemies (knights, mecha, soul nexus). | ZH: 精英房伤害倍率——应用于所有第四幕精英敌人。
+	internal const decimal EliteDamageMultiplier = 0.9m;
+
 	// =========================================================================
 	// Section 4: ARCHITECT BOSS HP
 	// EN: Phase 1 HP is computed from ArchitectP1SoloHp and multiplied by player-count factors.
@@ -171,9 +174,7 @@ internal static class Act4Config
 	// =========================================================================
 
 	/// EN: Number of hits in Phase 2 retaliation multi-attack. | ZH: 二阶段反击多段攻击的打击次数。
-	internal const int ArchitectP2RetaliationHits    = 2;
-	/// EN: Strength stacks the Architect enters Phase 2 with.  | ZH: 进入二阶段时的初始力量层数。
-	internal const int ArchitectP2OpeningStrength    = 4;
+	internal const int ArchitectP2RetaliationHits    = 3;
 	/// EN: Block Piercer stacks applied at Phase 3 start.      | ZH: 三阶段开始时的穿透格挡层数。
 	internal const int ArchitectP3BlockPiercerStacks = 5;
 
@@ -211,11 +212,11 @@ internal static class Act4Config
 	/// EN: Shadow Champion target HP (solo).                      | ZH: 单人暗影冠军目标HP。
 	internal const int     ArchitectShadowHp              = 485;
 	/// EN: Phase 4 Linked Shadow HP per character type (solo, 5 summoned simultaneously). | ZH: 四阶段连结之影各角色单人HP（同时5只）。
-	internal const int     LinkedShadowIroncladHp         = 153;
-	internal const int     LinkedShadowSilentHp           = 111;
-	internal const int     LinkedShadowDefectHp           = 124;
-	internal const int     LinkedShadowNecrobinderHp      = 120;
-	internal const int     LinkedShadowRegentHp           = 148;
+	internal const int     LinkedShadowIroncladHp         = 167;
+	internal const int     LinkedShadowSilentHp           = 123;
+	internal const int     LinkedShadowDefectHp           = 133;
+	internal const int     LinkedShadowNecrobinderHp      = 142;
+	internal const int     LinkedShadowRegentHp           = 150;
 	/// EN: Shadow HP multiplier at 2 players (base).              | ZH: 2人联机暗影HP倍率（基础值）。
 	internal const decimal ShadowMp2pBase            = 0.8m;
 	/// EN: Additional shadow HP multiplier per player above 2.    | ZH: 超过2人时每位玩家增加的暗影HP倍率。
@@ -243,7 +244,7 @@ internal static class Act4Config
 	// -- Ironclad: 2 hits (warrior, fewer, harder hits; per-hit = 2× Silent's per-hit) ------
 	internal const int LinkedShadowIroncladMultiHits  = 2;
 	internal const int LinkedShadowIroncladBaseMulti  = 4;   // eff: ceil(4×0.5)=2/hit, total=4
-	internal const int LinkedShadowIroncladBaseHeavy  = 12;  // eff: ceil(12×0.5)=6
+	internal const int LinkedShadowIroncladBaseHeavy  = 11;  // eff: ceil(11×0.5)=5.5
 
 	// -- Silent: 4 hits (assassin, rapid jabs; per-hit = half of 2-hit, same total multi) ---
 	internal const int LinkedShadowSilentMultiHits    = 4;
@@ -253,15 +254,15 @@ internal static class Act4Config
 	// -- Defect: 3 hits (tech spray, mid-range cadence) -----------------------------------
 	internal const int LinkedShadowDefectMultiHits    = 3;
 	internal const int LinkedShadowDefectBaseMulti    = 4;   // eff: ceil(4×0.5)=2/hit, total=6
-	internal const int LinkedShadowDefectBaseHeavy    = 10;  // eff: ceil(10×0.5)=5
+	internal const int LinkedShadowDefectBaseHeavy    = 9;  // eff: ceil(9×0.5)=4.5
 
 	// -- Regent: 2 hits (commanding, focused blows) -----------------------------------------
 	internal const int LinkedShadowRegentMultiHits    = 2;
 	internal const int LinkedShadowRegentBaseMulti    = 4;   // eff: ceil(4×0.5)=2/hit, total=4
-	internal const int LinkedShadowRegentBaseHeavy    = 12;  // eff: ceil(12×0.5)=6
+	internal const int LinkedShadowRegentBaseHeavy    = 11;  // eff: ceil(11×0.5)=5.5
 
 	// -- Necrobinder: 3 hits (curse spread) ------------------------------------------------
 	internal const int LinkedShadowNecrobinderMultiHits = 3;
 	internal const int LinkedShadowNecrobinderBaseMulti = 4;   // eff: ceil(4×0.5)=2/hit, total=6
-	internal const int LinkedShadowNecrobinderBaseHeavy = 10;  // eff: ceil(10×0.5)=5
+	internal const int LinkedShadowNecrobinderBaseHeavy = 9;  // eff: ceil(9×0.5)=4.5
 }

@@ -24,7 +24,7 @@ public sealed class ShadowNecrobinder : ArchitectShadowChampion
 
 	protected override int MultiHits => 5;
 
-	protected override int BaseHeavyDamage => 18;
+	protected override int BaseHeavyDamage => 16;
 
 	protected override AbstractIntent[] GetBuffIntents()
 	{

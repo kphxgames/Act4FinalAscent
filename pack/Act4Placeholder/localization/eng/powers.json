@@ -48,8 +48,8 @@
   "SPORE_NOURISHMENT_POWER.title": "Spore Nourishment",
   "SPORE_NOURISHMENT_POWER.description": "At the end of each enemy turn, heal [gold]The Architect[/gold] for [blue]5%[/blue] of its Max HP.",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "Shadow Thorns",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "The Architect has [blue]{Amount}[/blue] [gold]Thorns[/gold] while [gold]Shadows[/gold] are on the field. Eliminate the [gold]Shadows[/gold] to remove The Architect's [gold]Thorns[/gold].",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "The Architect has [blue]{Amount}[/blue] [gold]Thorns[/gold] while [gold]Shadows[/gold] are on the field. Eliminate the [gold]Shadows[/gold] to remove The Architect's [gold]Thorns[/gold]."
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "The Architect has [blue]{Amount}[/blue] [gold]Thorns[/gold] while [gold]Shadows[/gold] are on the field. Eliminate all [gold]Shadows[/gold] to remove [gold]Thorns[/gold] and [gold]Stun[/gold] The Architect for a turn.",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "The Architect has [blue]{Amount}[/blue] [gold]Thorns[/gold] while [gold]Shadows[/gold] are on the field. Eliminate all [gold]Shadows[/gold] to remove [gold]Thorns[/gold] and [gold]Stun[/gold] The Architect for a turn."
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "Forbidden Knowledge",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "You are Cursed by the Architect's forbidden tome. Gain [blue]2[/blue] extra max [gold]Energy[/gold] and draw [blue]2[/blue] extra cards each turn.",
