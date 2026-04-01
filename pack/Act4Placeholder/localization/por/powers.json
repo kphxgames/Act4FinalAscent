@@ -48,8 +48,8 @@
   "SPORE_NOURISHMENT_POWER.title": "Nutrição de esporos",
   "SPORE_NOURISHMENT_POWER.description": "Ao final de cada turno inimigo, [gold]O Arquiteto[/gold] cura [blue]5%[/blue] do HP máximo.",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "Espinhos das sombras",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "O Arquiteto tem [blue]{Amount}[/blue] [gold]Espinhos[/gold] enquanto houver [gold]Sombras[/gold] no campo. Elimine as [gold]Sombras[/gold] para remover os [gold]Espinhos[/gold] do Arquiteto.",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "O Arquiteto tem [blue]{Amount}[/blue] [gold]Espinhos[/gold] enquanto houver [gold]Sombras[/gold] no campo. Elimine as [gold]Sombras[/gold] para remover os [gold]Espinhos[/gold] do Arquiteto."
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "O Arquiteto tem [blue]{Amount}[/blue] [gold]Espinhos[/gold] enquanto houver [gold]Sombras[/gold] no campo. Elimine todas as [gold]Sombras[/gold] para remover os [gold]Espinhos[/gold] e [gold]Atordoar[/gold] o Arquiteto por um turno.",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "O Arquiteto tem [blue]{Amount}[/blue] [gold]Espinhos[/gold] enquanto houver [gold]Sombras[/gold] no campo. Elimine todas as [gold]Sombras[/gold] para remover os [gold]Espinhos[/gold] e [gold]Atordoar[/gold] o Arquiteto por um turno."
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "Conhecimento proibido",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "Você está amaldiçoado pelo tomo proibido do Arquiteto. Ganhe [blue]2[/blue] de [gold]Energia[/gold] máxima adicional e compre [blue]2[/blue] cartas extras por turno.",

@@ -22,9 +22,9 @@ public sealed class ShadowRegent : ArchitectShadowChampion
 
 	protected override int BaseMultiDamage => 4;
 
-	protected override int MultiHits => 7;
+	protected override int MultiHits => 6;
 
-	protected override int BaseHeavyDamage => 17;
+	protected override int BaseHeavyDamage => 15;
 
 	protected override AbstractIntent[] GetBuffIntents()
 	{

@@ -48,8 +48,8 @@
   "SPORE_NOURISHMENT_POWER.title": "Sporennährung",
   "SPORE_NOURISHMENT_POWER.description": "Am Ende jedes Feindzuges heilt [gold]Der Architekt[/gold] [blue]5%[/blue] seiner maximalen LP.",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "Schattendornen",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "Der Architekt hat [blue]{Amount}[/blue] [gold]Dornen[/gold], solange sich [gold]Schatten[/gold] auf dem Feld befinden. Eliminiert die [gold]Schatten[/gold], um die [gold]Dornen[/gold] des Architekten zu entfernen.",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "Der Architekt hat [blue]{Amount}[/blue] [gold]Dornen[/gold], solange sich [gold]Schatten[/gold] auf dem Feld befinden. Eliminiert die [gold]Schatten[/gold], um die [gold]Dornen[/gold] des Architekten zu entfernen."
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "Der Architekt hat [blue]{Amount}[/blue] [gold]Dornen[/gold], solange sich [gold]Schatten[/gold] auf dem Feld befinden. Eliminiert alle [gold]Schatten[/gold], um die [gold]Dornen[/gold] zu entfernen und den Architekten für eine Runde zu [gold]Betäuben[/gold].",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "Der Architekt hat [blue]{Amount}[/blue] [gold]Dornen[/gold], solange sich [gold]Schatten[/gold] auf dem Feld befinden. Eliminiert alle [gold]Schatten[/gold], um die [gold]Dornen[/gold] zu entfernen und den Architekten für eine Runde zu [gold]Betäuben[/gold]."
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "Verbotenes Wissen",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "Du bist vom verbotenen Tome des Architekten verflucht. Erhalte [blue]2[/blue] zusätzliche maximale [gold]Energie[/gold] und ziehe [blue]2[/blue] zusätzliche Karten pro Zug.",

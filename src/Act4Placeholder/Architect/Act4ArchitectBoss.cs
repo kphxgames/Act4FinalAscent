@@ -79,6 +79,8 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 
 	private int _pendingPhaseThreeCarriedStrength;
 
+	private int _pendingPhaseTwoCarriedStrength;
+
 	private int _currentPlayerRoundDamageTaken;
 
 	private int _lastCompletedPlayerRoundDamagePercent = 20;

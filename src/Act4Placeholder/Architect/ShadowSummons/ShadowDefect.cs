@@ -20,11 +20,11 @@ public sealed class ShadowDefect : ArchitectShadowChampion
 {
 	protected override string ShadowVisualsPath => "res://scenes/creature_visuals/defect.tscn";
 
-	protected override int BaseMultiDamage => 3;
+	protected override int BaseMultiDamage => 6;
 
-	protected override int MultiHits => 8;
+	protected override int MultiHits => 4;
 
-	protected override int BaseHeavyDamage => 16;
+	protected override int BaseHeavyDamage => 14;
 
 	protected override AbstractIntent[] GetBuffIntents()
 	{

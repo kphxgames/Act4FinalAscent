@@ -48,8 +48,8 @@
   "SPORE_NOURISHMENT_POWER.title": "Nourriture fongique",
   "SPORE_NOURISHMENT_POWER.description": "À la fin de chaque tour ennemi, [gold]L'Architecte[/gold] récupère [blue]5%[/blue] de ses PV max.",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "Épines de l'ombre",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "L'Architecte a [blue]{Amount}[/blue] [gold]Épines[/gold] tant que des [gold]Ombres[/gold] sont sur le terrain. Éliminez les [gold]Ombres[/gold] pour retirer les [gold]Épines[/gold] de l'Architecte.",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "L'Architecte a [blue]{Amount}[/blue] [gold]Épines[/gold] tant que des [gold]Ombres[/gold] sont sur le terrain. Éliminez les [gold]Ombres[/gold] pour retirer les [gold]Épines[/gold] de l'Architecte."
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "L'Architecte a [blue]{Amount}[/blue] [gold]Épines[/gold] tant que des [gold]Ombres[/gold] sont sur le terrain. Éliminez toutes les [gold]Ombres[/gold] pour retirer les [gold]Épines[/gold] et [gold]Étourdir[/gold] l'Architecte pendant un tour.",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "L'Architecte a [blue]{Amount}[/blue] [gold]Épines[/gold] tant que des [gold]Ombres[/gold] sont sur le terrain. Éliminez toutes les [gold]Ombres[/gold] pour retirer les [gold]Épines[/gold] et [gold]Étourdir[/gold] l'Architecte pendant un tour."
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "Connaissance interdite",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "Vous êtes maudit par le tome interdit de l'Architecte. Gagnez [blue]2[/blue] d'[gold]Énergie[/gold] max supplémentaires et piochez [blue]2[/blue] cartes supplémentaires par tour.",

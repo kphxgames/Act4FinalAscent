@@ -34,7 +34,7 @@ public abstract class ArchitectShadowChampion : MonsterModel
 
 	private const string ShadowMultiAttackSfx = "event:/sfx/enemy/enemy_attacks/test_subject/test_subject_slash";
 
-	private static readonly Color ShadowTint = new Color(0.04f, 0.04f, 0.04f, 1f);
+	private static readonly Color ShadowTint = new Color(0.1f, 0.1f, 0.1f, 1f);
 
 	public decimal BonusHpMultiplier { get; set; } = 1m;
 
@@ -121,8 +121,8 @@ public abstract class ArchitectShadowChampion : MonsterModel
 		});
 		MoveState val6 = new MoveState("HEAVY_LOOP", (Func<IReadOnlyList<Creature>, Task>)HeavyMove, new AbstractIntent[1] { new SingleAttackIntent((Func<decimal>)(() => (decimal)HeavyDamage)) });
 		MoveState val7 = new MoveState("MULTI_LOOP", (Func<IReadOnlyList<Creature>, Task>)MultiMove, new AbstractIntent[1] { new DynamicMultiAttackIntent(() => (decimal)MultiDamage, () => MultiHits) });
-		val2.FollowUpState = val3;
-		val3.FollowUpState = val;
+		val3.FollowUpState = val2;
+		val2.FollowUpState = val;
 		val.FollowUpState = val4;
 		val4.FollowUpState = val5;
 		val5.FollowUpState = val6;
@@ -137,7 +137,7 @@ public abstract class ArchitectShadowChampion : MonsterModel
 			val5,
 			val6,
 			val7
-		}, val2);
+		}, val3);
 	}
 
 	protected virtual AbstractIntent[] GetBuffIntents()

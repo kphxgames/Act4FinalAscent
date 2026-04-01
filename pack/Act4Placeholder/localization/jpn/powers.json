@@ -46,8 +46,8 @@
   "SPORE_NOURISHMENT_POWER.title": "胞子の滋養",
   "SPORE_NOURISHMENT_POWER.description": "各敵ターン終了時、[gold]建築家[/gold]は最大HPの[blue]5%[/blue]を回復する。",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "影の棘",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "[gold]影[/gold]がフィールドにいる間、建築家は[blue]{Amount}[/blue]の[gold]棘[/gold]を持つ。[gold]影[/gold]を倒すと建築家の[gold]棘[/gold]が除去される。",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "[gold]影[/gold]がフィールドにいる間、建築家は[blue]{Amount}[/blue]の[gold]棘[/gold]を持つ。[gold]影[/gold]を倒すと建築家の[gold]棘[/gold]が除去される。"
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "[gold]影[/gold]がフィールドにいる間、建築家は[blue]{Amount}[/blue]の[gold]棘[/gold]を持つ。すべての[gold]影[/gold]を倒すと[gold]棘[/gold]が除去され、1ターンの間建築家を[gold]スタン[/gold]させる。",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "[gold]影[/gold]がフィールドにいる間、建築家は[blue]{Amount}[/blue]の[gold]棘[/gold]を持つ。すべての[gold]影[/gold]を倒すと[gold]棘[/gold]が除去され、1ターンの間建築家を[gold]スタン[/gold]させる。"
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "禁断の知識",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "建築家の禁断の書に呪われている。最大[gold]エネルギー[/gold]が[blue]2[/blue]増加し、毎ターン[blue]2[/blue]枚追加でカードを引く。",

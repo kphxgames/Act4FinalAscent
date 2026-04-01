@@ -29,6 +29,7 @@ using MegaCrit.Sts2.Core.Map;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Potions;
@@ -283,7 +284,8 @@ internal static class ModSupport
 	//     RestoreAct4FlagsFromSave so the brutal flag and weakest buff grants match the host.
 	// ZH: 主机→客户端加入同步的待处理状态。当客户端收到含有Act4额外状态字节的
 	//     ClientLoadJoinResponseMessage时由ClientLoadJoinSyncPatch设置，
-	//     并被RestoreAct4FlagsFromSave消费一次，用于确保残暴模式标志和最弱增益赠予与主机一致。
+	//     并被RestoreAct4FlagsFromSave消费一次，用于确保残暴模式标志、最弱增益赠予、
+	//     以及偷书选择与主机一致。
 	private static bool? _pendingJoinBrutalOverride;
 	private static List<ulong>? _pendingJoinWeakestBuffIds;
 	private static int? _pendingJoinBookChoiceBitmask;
@@ -374,6 +376,7 @@ internal static class ModSupport
 		{
 			return null;
 		}
+
 		try
 		{
 			object? visuals = NCreatureVisualsProperty?.GetValue(creatureNode);
@@ -381,6 +384,7 @@ internal static class ModSupport
 			{
 				return null;
 			}
+
 			PropertyInfo? spineBodyProperty = visuals.GetType().GetProperty("SpineBody", BindingFlags.Public | BindingFlags.Instance);
 			return spineBodyProperty?.GetValue(visuals) as MegaSprite;
 		}
@@ -1778,13 +1782,13 @@ internal static class ModSupport
 			EnsureRunDamageContributionsLoaded();
 			Player? dealerPlayer = dealer?.Player;
 			RunState? runState = combatState?.RunState as RunState ?? dealerPlayer?.RunState as RunState;
-			if (dealerPlayer == null || runState == null || runState.Players.Count <= 1)
+			if (dealerPlayer == null || runState == null || runState.Players.Count <= 0)
 			{
 				return;
 			}
 			// Track only meaningful player -> enemy health damage.
-			// In STS2 side enum usage in this project: Player=2, Enemy=1.
-			if ((int)dealer.Side != 2 || target == null || (int)target.Side != 1)
+			// CombatSide enum: None=0, Player=1, Enemy=2.
+			if ((int)dealer.Side != 1 || target == null || (int)target.Side != 2)
 			{
 				return;
 			}
@@ -2608,6 +2612,12 @@ internal static class ModSupport
 		{
 			num *= 0.9m;
 		}
+		// EN: Global 10% damage reduction for all Act 4 elite enemies (configurable via Act4Config.EliteDamageMultiplier).
+		// ZH: 所有第四幕精英敌人全局减伤10%（通过Act4Config.EliteDamageMultiplier可调）。
+		if (IsEmpoweredAct4EliteRoom(runState))
+		{
+			num *= Act4Config.EliteDamageMultiplier;
+		}
 		// EN: Global ×1.2 Act 4 hardness boost disabled, paired removal of the Architect's ×0.8
 		//     in HookModifyDamagePatch means both cancel out, so removing both gives a cleaner baseline.
 		// ZH: 全局×1.2强度加成已禁用——与HookModifyDamagePatch中建筑师×0.8的同步移除相抵消，移除双方得到更干净的基准。
@@ -2701,7 +2711,7 @@ internal static class ModSupport
 	/// EN: Applies the co-op weakest-contributor +3 Strength / +3 Dexterity buff to a player creature
 	///     at the start of every Act 4 combat. Called by CombatManagerAfterCreatureAddedPatch on both
 	///     host and client identically, so it is fully deterministic and never causes desync.
-	///     The entitlement is persisted in JSON (act4_weakest_buff_grants.json), so save &amp; quit → resume
+	///     The entitlement is persisted in JSON (act4_weakest_buff_grants.json), so save & quit → resume
 	///     will re-apply the buff correctly at the next combat start without requiring any new interaction.
 	///     A localized fullscreen notification is shown only for the local player (purely visual, no sync needed).
 	/// ZH: 在每场第四幕战斗开始时，为联机最低输出玩家施加+3力量/+3敏捷。
@@ -2715,13 +2725,26 @@ internal static class ModSupport
 		Player? player = creature.Player;
 		if (player == null) return;
 		RunState? runState = player.RunState as RunState;
-		// Only applies during Act 4 and only when the player earned the buff entitlement this co-op run.
+		// Only applies during Act 4 and only when the player earned the buff entitlement.
 		if (!IsAct4Placeholder(runState)) return;
 		if (!HasAct4WeakestBuff(player)) return;
 
-		await PowerCmd.Apply<StrengthPower>(creature, 10m, creature, (CardModel)null, false);
-		await PowerCmd.Apply<DexterityPower>(creature, 5m, creature, (CardModel)null, false);
-		Logger.Info($"ApplyAct4WeakestPlayerBuffAsync: Str10+Dex5 applied to player {player.NetId}", 1);
+		// EN: Solo players receive a smaller buff (+4/+4, +2 class bonus) from the Empyreal Cache
+		//     dialogue; co-op weakest players receive the full buff (+8/+8, +4 class bonus).
+		// ZH: 单人玩家获得较少增益（+4/+4，+2职业加成），联机最弱玩家获得完整增益（+8/+8，+4职业加成）。
+		bool isSolo = ((IReadOnlyCollection<Player>)runState.Players).Count <= 1;
+		decimal strDex = isSolo ? 4m : 8m;
+		decimal classBonus = isSolo ? 2m : 4m;
+
+		await PowerCmd.Apply<StrengthPower>(creature, strDex, creature, (CardModel)null, false);
+		await PowerCmd.Apply<DexterityPower>(creature, strDex, creature, (CardModel)null, false);
+		// EN: Character-specific bonus: Focus for Defect, Envenom for Silent.
+		// ZH: 角色专属加成：机器人集中，静默猎人淬毒。
+		if (player.Character is Defect)
+			await PowerCmd.Apply<FocusPower>(creature, classBonus, creature, (CardModel)null, false);
+		else if (player.Character is Silent)
+			await PowerCmd.Apply<EnvenomPower>(creature, classBonus, creature, (CardModel)null, false);
+		Logger.Info($"ApplyAct4WeakestPlayerBuffAsync: Str{strDex}+Dex{strDex} (+{classBonus} class bonus) applied to player {player.NetId} (solo={isSolo})", 1);
 	}
 
 	internal static async Task ApplyAct4EnemyRoomBuffsAsync(Creature creature)
@@ -2738,7 +2761,10 @@ internal static class ModSupport
 		int protectionStacks = enemyCount >= 3 ? 1 : 2;
 		await PowerCmd.Apply<ArtifactPower>(creature, (decimal)protectionStacks, creature, (CardModel)null, false);
 		await PowerCmd.Apply<StrengthPower>(creature, 5m, creature, (CardModel)null, false);
-		await PowerCmd.Apply<SlipperyPower>(creature, (decimal)protectionStacks, creature, (CardModel)null, false);
+		// EN: Slippery only in Brutal mode; non-Brutal elites already have Artifact for protection.
+		// ZH: 滑溜仅在残酷模式下生效——非残酷精英已有神器之力提供保护。
+		if (IsBrutalAct4(runState))
+			await PowerCmd.Apply<SlipperyPower>(creature, (decimal)protectionStacks, creature, (CardModel)null, false);
 		await PowerCmd.Apply<ArchitectBlockPiercerPower>(creature, 1m, creature, (CardModel)null, false);
 	}
 
@@ -2948,6 +2974,11 @@ internal static class ModSupport
 		_architectDifficultyChoiceActive = false;
 		Logger.Info($"TryApplyArchitectDifficultyChoice: source={source} optionIndex={optionIndex} brutal={brutal}", 1);
 		return true;
+	}
+
+	internal static decimal GetAct4ProgressForDebug(RunState runState)
+	{
+		return GetAct4Progress(runState);
 	}
 
 	internal static void SetAct4Brutal(RunState? runState, bool brutal)

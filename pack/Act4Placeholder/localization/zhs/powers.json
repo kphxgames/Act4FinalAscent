@@ -48,12 +48,14 @@
   "SPORE_NOURISHMENT_POWER.title": "孢子滋养",
   "SPORE_NOURISHMENT_POWER.description": "每个敌方回合结束时，[gold]建筑师[/gold]恢复最大HP的 [blue]5%[/blue]。",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "暗影荆棘",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "场上存在[gold]暗影[/gold]时，建筑师拥有 [blue]{Amount}[/blue] [gold]层荆棘[/gold]。消灭[gold]暗影[/gold]可移除建筑师的[gold]荆棘[/gold]。",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "场上存在[gold]暗影[/gold]时，建筑师拥有 [blue]{Amount}[/blue] [gold]层荆棘[/gold]。消灭[gold]暗影[/gold]可移除建筑师的[gold]荆棘[/gold]。",
-  "CURSED_TOME_PLAYER_BONUS_POWER.title": "禁忌知识",
-  "CURSED_TOME_PLAYER_BONUS_POWER.description": "禁忌知识的力量。每回合开始时额外抽取[blue]2[/blue]张牌，并获得[blue]2[/blue]点能量[gold]能量[/gold]。",
-  "CURSED_TOME_PLAYER_BONUS_POWER.smartDescription": "禁忌知识的力量。每回合开始时额外抽取[blue]2[/blue]张牌，并获得[blue]2[/blue]点能量[gold]能量[/gold]。",
-  "LINKED_SHADOW_POWER.title": "暗影链接",
-  "LINKED_SHADOW_POWER.description": "如果该暗影死亡，建筑师失去其最大生命值的 [blue]10%[/blue]。",
-  "LINKED_SHADOW_POWER.smartDescription": "如果该暗影死亡，建筑师失去其最大生命值的 [blue]10%[/blue]。"
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "场上存在[gold]暗影[/gold]时，建筑师拥有 [blue]{Amount}[/blue] [gold]荆棘[/gold]。消灭所有[gold]暗影[/gold]可移除[gold]荆棘[/gold]并[gold]击晕[/gold]建筑师一回合。",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "场上存在[gold]暗影[/gold]时，建筑师拥有 [blue]{Amount}[/blue] [gold]荆棘[/gold]。消灭所有[gold]暗影[/gold]可移除[gold]荆棘[/gold]并[gold]击晕[/gold]建筑师一回合。"
+,
+  "CURSED_TOME_PLAYER_BONUS_POWER.title": "禁忘之知",
+  "CURSED_TOME_PLAYER_BONUS_POWER.description": "你被建筑师的禁忘典籍试和。每回合额外获得 [blue]2[/blue] 点最大[gold]能量[/gold]，并多摘 [blue]2[/blue] 张牌。",
+  "CURSED_TOME_PLAYER_BONUS_POWER.smartDescription": "你被建筑师的禁忘典籍试和。每回合额外获得 [blue]2[/blue] 点最大[gold]能量[/gold]，并多摘 [blue]2[/blue] 张牌。"
+,
+  "LINKED_SHADOW_POWER.title": "连结之影",
+  "LINKED_SHADOW_POWER.description": "若此影死亡，建筑师损失其最大HP的 [blue]10%[/blue]。",
+  "LINKED_SHADOW_POWER.smartDescription": "若此影死亡，建筑师损失其最大HP的 [blue]10%[/blue]。"
 }

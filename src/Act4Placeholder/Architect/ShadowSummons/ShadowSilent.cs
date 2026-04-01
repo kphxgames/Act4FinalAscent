@@ -18,9 +18,9 @@ public sealed class ShadowSilent : ArchitectShadowChampion
 
 	protected override int BaseMultiDamage => 3;
 
-	protected override int MultiHits => 10;
+	protected override int MultiHits => 7;
 
-	protected override int BaseHeavyDamage => 15;
+	protected override int BaseHeavyDamage => 12;
 
 	protected override Task AfterHeavyAttackAsync(AttackCommand command)
 	{

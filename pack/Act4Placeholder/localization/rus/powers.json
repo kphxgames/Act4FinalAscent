@@ -48,8 +48,8 @@
   "SPORE_NOURISHMENT_POWER.title": "Споровое питание",
   "SPORE_NOURISHMENT_POWER.description": "В конце каждого хода врага [gold]Архитектор[/gold] восстанавливает [blue]5%[/blue] макс. ОЗ.",
   "ARCHITECT_SUMMON_THORNS_POWER.title": "Шипы теней",
-  "ARCHITECT_SUMMON_THORNS_POWER.description": "Пока на поле есть [gold]Тени[/gold], Архитектор имеет [blue]{Amount}[/blue] [gold]Шипов[/gold]. Уничтожьте [gold]Тени[/gold], чтобы убрать [gold]Шипы[/gold] с Архитектора.",
-  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "Пока на поле есть [gold]Тени[/gold], Архитектор имеет [blue]{Amount}[/blue] [gold]Шипов[/gold]. Уничтожьте [gold]Тени[/gold], чтобы убрать [gold]Шипы[/gold] с Архитектора."
+  "ARCHITECT_SUMMON_THORNS_POWER.description": "Пока на поле есть [gold]Тени[/gold], Архитектор имеет [blue]{Amount}[/blue] [gold]Шипов[/gold]. Уничтожьте всех [gold]Теней[/gold], чтобы убрать [gold]Шипы[/gold] и [gold]Оглушить[/gold] Архитектора на один ход.",
+  "ARCHITECT_SUMMON_THORNS_POWER.smartDescription": "Пока на поле есть [gold]Тени[/gold], Архитектор имеет [blue]{Amount}[/blue] [gold]Шипов[/gold]. Уничтожьте всех [gold]Теней[/gold], чтобы убрать [gold]Шипы[/gold] и [gold]Оглушить[/gold] Архитектора на один ход."
 ,
   "CURSED_TOME_PLAYER_BONUS_POWER.title": "Запретное знание",
   "CURSED_TOME_PLAYER_BONUS_POWER.description": "Вы прокляты запретным томом Архитектора. Получайте [blue]2[/blue] дополнительной максимальной [gold]Энергии[/gold] и тяните [blue]2[/blue] дополнительные карты каждый ход.",

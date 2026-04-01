@@ -407,13 +407,14 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		int strengthCap = GetCurrentStrengthCap();
 		int strengthGain = 0;
 		int underCapCadence = GetUnderCapStrengthCadence();
-		if (currentStrength < strengthCap && (underCapCadence <= 1 || _enemyTurnCount % underCapCadence == 1))
+		// Strength cadence starts on turn 2 of each phase (skip turn 1).
+		if (_phaseTurnCount >= 2 && currentStrength < strengthCap && (underCapCadence <= 1 || (_phaseTurnCount - 2) % underCapCadence == 0))
 		{
 			strengthGain = Math.Min(GetPassiveStrengthGainPerTrigger(), strengthCap - currentStrength);
 			await PowerCmd.Apply<StrengthPower>(((MonsterModel)this).Creature, (decimal)strengthGain, ((MonsterModel)this).Creature, (CardModel)null, false);
 			currentStrength += strengthGain;
 		}
-		else if (currentStrength >= strengthCap && _enemyTurnCount % GetOverCapStrengthCadence() == 0)
+		else if (_phaseTurnCount >= 2 && currentStrength >= strengthCap && (_phaseTurnCount - 2) % GetOverCapStrengthCadence() == 0)
 		{
 			strengthGain = 1;
 			await PowerCmd.Apply<StrengthPower>(((MonsterModel)this).Creature, 1m, ((MonsterModel)this).Creature, (CardModel)null, false);
@@ -434,6 +435,11 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		_isRetaliationEndingTurn = false;
 		_hasQueuedRetaliationForNextPlayerTurn = false;
 		_hasQueuedRetaliationActionRequested = false;
+		if (nextPhaseNumber == 2)
+		{
+			_pendingPhaseTwoCarriedStrength = ((MonsterModel)this).Creature.GetPower<StrengthPower>()?.Amount ?? 0;
+			LogArchitect($"BeginAwaitingPhaseTransition:snapshotted-phase-two-strength value={_pendingPhaseTwoCarriedStrength}");
+		}
 		if (nextPhaseNumber == 3)
 		{
 			_pendingPhaseThreeCarriedStrength = ((MonsterModel)this).Creature.GetPower<StrengthPower>()?.Amount ?? 0;
@@ -498,6 +504,8 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		_currentPlayerRoundDamageTaken = 0;
 		_lastCompletedPlayerRoundDamagePercent = 20;
 		ExternalStunUsedThisPhase = false;
+		int carriedStrengthP2 = _pendingPhaseTwoCarriedStrength;
+		_pendingPhaseTwoCarriedStrength = 0;
 		if (((MonsterModel)this).Creature.GetPower<ArchitectAllOrNothingPower>() != null)
 		{
 			await PowerCmd.Remove<ArchitectAllOrNothingPower>(((MonsterModel)this).Creature);
@@ -515,7 +523,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 		LogArchitect($"EnterPhaseTwo:healed hp={((MonsterModel)this).Creature.CurrentHp}/{((MonsterModel)this).Creature.MaxHp}");
 		await TryApplyPhaseTransitionVisualsAsync("EnterPhaseTwo", ArchitectPhaseTwoTint, 1.1f, movingRightwards: true, ArchitectPhaseTwoSkeletonDataPath);
 		UpdateTorchGradient(PurpleFireGradient);
-		await SetStrengthAmountAsync(Act4Config.ArchitectP2OpeningStrength);
+		await SetStrengthAmountAsync(carriedStrengthP2);
 		await SyncAdaptiveResistancePowerAsync();
 		await SyncRetaliationCounterAsync();
 		// Intangible intentionally not applied here ? 1 stack vanishes before players
@@ -531,7 +539,7 @@ public sealed partial class Act4ArchitectBoss : MonsterModel
 			await PowerCmd.SetAmount<SlipperyPower>(((MonsterModel)this).Creature, (decimal)phaseTwoProtectionStacks, null, null);
 		}
 		await ApplyBookPhaseStartEffectsAsync();
-		LogArchitect($"EnterPhaseTwo:buffs artifact={((MonsterModel)this).Creature.GetPower<ArtifactPower>()?.Amount ?? 0} slippery={((MonsterModel)this).Creature.GetPower<SlipperyPower>()?.Amount ?? 0} strength={((MonsterModel)this).Creature.GetPower<StrengthPower>()?.Amount ?? 0}");
+		LogArchitect($"EnterPhaseTwo:buffs artifact={((MonsterModel)this).Creature.GetPower<ArtifactPower>()?.Amount ?? 0} slippery={((MonsterModel)this).Creature.GetPower<SlipperyPower>()?.Amount ?? 0} strength={((MonsterModel)this).Creature.GetPower<StrengthPower>()?.Amount ?? 0} carriedStrength={carriedStrengthP2}");
 		NPowerUpVfx.CreateGhostly(((MonsterModel)this).Creature);
 		NPowerUpVfx.CreateNormal(((MonsterModel)this).Creature);
 		await CardPileCmd.AddToCombatAndPreview<Dazed>(CombatState.Players.Select(p => p.Creature), PileType.Discard, 8, addedByPlayer: false);
